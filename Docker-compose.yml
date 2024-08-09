@@ -10,9 +10,9 @@ services:
     environment:
       - FLASK_ENV=development
       - LLAMA_HOST=http://127.0.0.1:11434  # Add this line for external LLaMA service
-  copilot_frontend:
+  copilot_web:
     build:
-      context: copilot-frontend/
+      context: copilot-web/
     container_name: react-app
     depends_on:
       - copilot_backend
