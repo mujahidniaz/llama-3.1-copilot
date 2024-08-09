@@ -5,19 +5,39 @@ services:
     build:
       context: copilot-backend/
     container_name: flask-api
+    restart: always
     ports:
       - "8000:8000"
+    depends_on:
+      - ollama-api
     environment:
       - FLASK_ENV=development
-      - LLAMA_HOST=http://127.0.0.1:11434  # Add this line for external LLaMA service
+      - LLAMA_HOST=http://ollama-api:11434  # Corrected for internal Docker network
+
   copilot_web:
     build:
       context: copilot-web/
     container_name: react-app
     depends_on:
       - copilot_backend
+    environment:
+      - FLASK_ENV=development
+      - LLAMA_HOST=http://ollama-api:11434  # Corrected for internal Docker network
     ports:
       - "3000:80"
+
+  ollama-api:
+    image: ollama/ollama
+    container_name: ollama-api
+    restart: always
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama:/root/.ollama
+
+volumes:
+  ollama:
+    driver: local
 
 networks:
   default:

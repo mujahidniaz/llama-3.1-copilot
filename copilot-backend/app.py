@@ -8,10 +8,9 @@ import ollama
 app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
-ollama_host = os.getenv('OLLAMA_HOST', 'localhost')
-ollama_port = os.getenv('OLLAMA_PORT', 11434)
 print("Pulling Llama-3.1")
-ollama.pull("llama3.1")
+client = ollama.Client(host='http://ollama-api:11434')
+client.pull("llama3.1")
 
 
 @socketio.on('send_message')
@@ -19,7 +18,8 @@ def handle_message(data):
     message = data.get('message', '')
 
     try:
-        stream = ollama.chat(model='llama3.1', messages=[{'role': 'user', 'content': message}], stream=True)
+
+        stream = client.chat(model='llama3.1', messages=[{'role': 'user', 'content': message}], stream=True)
         for chunk in stream:
             emit('receive_message', {'content': chunk['message']['content']})
     except Exception as e:

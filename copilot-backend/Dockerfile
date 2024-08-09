@@ -1,9 +1,5 @@
 # Use the official Python image from the Docker Hub
-FROM ubuntu
-RUN apt update
-RUN apt install python3 python3-pip -y
-WORKDIR /Destop/DS
-RUN curl -fsSL https://ollama.com/install.sh | sh
+FROM python
 # Set the working directory
 WORKDIR /app
 

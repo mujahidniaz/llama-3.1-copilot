@@ -5,7 +5,7 @@ import io from "socket.io-client";
 import InputArea from "./InputArea";
 import "../styles/ChatInterface.css";
 import TypingAnimation from "./TypingAnimation";
-const socket = io("http://copilot_backend:8000");
+const socket = io("http://localhost:8000");
 //const socket = io("http://localhost:8000");
 const ChatInterface = () => {
   const [messages, setMessages] = useState([]);
