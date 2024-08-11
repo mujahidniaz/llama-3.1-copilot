@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../styles/InputArea.css";
 
-const InputArea = ({ onSendMessage }) => {
+const InputArea = ({ onSendMessage, onStopGeneration, isGenerating }) => {
   const [input, setInput] = useState("");
 
   const handleKeyDown = (e) => {
@@ -26,9 +26,15 @@ const InputArea = ({ onSendMessage }) => {
         onChange={(e) => setInput(e.target.value)}
         onKeyDown={handleKeyDown}
         placeholder="Type your message here..."
-        rows={3} // Adjust the number of rows as needed
+        rows={3}
       />
-      <button type="submit">Send</button>
+      {isGenerating ? (
+        <button type="button" onClick={onStopGeneration}>
+          Stop
+        </button>
+      ) : (
+        <button type="submit">Send</button>
+      )}
     </form>
   );
 };

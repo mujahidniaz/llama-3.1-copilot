@@ -1,19 +1,24 @@
 import React, { useState, useEffect, useRef } from "react";
 import Message from "./Message";
 import io from "socket.io-client";
-
 import InputArea from "./InputArea";
+import SidePanel from "./SidePanel";
 import "../styles/ChatInterface.css";
 import TypingAnimation from "./TypingAnimation";
+
 const socket = io("http://localhost:8000");
-//const socket = io("http://localhost:8000");
+
 const ChatInterface = () => {
   const [messages, setMessages] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generationStopped, setGenerationStopped] = useState(false);
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
+    // Listen for message chunks
     socket.on("receive_message", (data) => {
+      if (generationStopped) return;
+
       setMessages((prevMessages) => {
         const newMessages = [...prevMessages];
         if (newMessages[newMessages.length - 1].isUser) {
@@ -26,21 +31,35 @@ const ChatInterface = () => {
         }
         return newMessages;
       });
+    });
+
+    // Listen for generation completion
+    socket.on("generation_completed", () => {
       setIsGenerating(false);
     });
 
     return () => {
       socket.off("receive_message");
+      socket.off("generation_completed");
     };
-  }, []);
+  }, [generationStopped]);
 
   const sendMessage = (message) => {
+    const context = messages.map((msg) => msg.text).join(" ") + " " + message;
+
     setMessages((prevMessages) => [
       ...prevMessages,
       { text: message, isUser: true },
     ]);
     setIsGenerating(true);
-    socket.emit("send_message", { message });
+    setGenerationStopped(false);
+    socket.emit("send_message", { message: context });
+  };
+
+  const stopGeneration = () => {
+    socket.emit("stop_generation");
+    setIsGenerating(false);
+    setGenerationStopped(true);
   };
 
   useEffect(() => {
@@ -49,61 +68,7 @@ const ChatInterface = () => {
 
   return (
     <div className="chat-interface">
-      <div className="side-panel">
-        <div className="logo-container">
-          <div className="logo">
-            {/* Replace with your actual logo */}
-            <svg viewBox="0 0 100 100" width="80" height="80">
-              <circle cx="50" cy="50" r="45" fill="#667eea" />
-              <text
-                x="50"
-                y="50"
-                fontFamily="Arial"
-                fontSize="40"
-                fill="white"
-                textAnchor="middle"
-                dominantBaseline="central"
-              >
-                L3
-              </text>
-            </svg>
-          </div>
-          <h1>LLaMA 3</h1>
-        </div>
-        <div className="ai-animation">
-          <div className="node n1"></div>
-          <div className="node n2"></div>
-          <div className="node n3"></div>
-          <div className="node n4"></div>
-          <div className="node n5"></div>
-          <div className="node n6"></div>
-        </div>
-        <div className="welcome-message">
-          <h2>Welcome to the future of conversation</h2>
-          <p>
-            Powered by advanced AI, I'm here to assist you with any questions or
-            tasks you have.
-          </p>
-        </div>
-        <div className="features">
-          <div className="feature">
-            <span className="feature-icon">🚀</span>
-            <span className="feature-text">Lightning-fast responses</span>
-          </div>
-          <div className="feature">
-            <span className="feature-icon">🧠</span>
-            <span className="feature-text">
-              Advanced language understanding
-            </span>
-          </div>
-          <div className="feature">
-            <span className="feature-icon">🔒</span>
-            <span className="feature-text">
-              Secure and private conversations
-            </span>
-          </div>
-        </div>
-      </div>
+      <SidePanel />
       <div className="main-chat">
         <div className="chat-header">
           <h2>Chat with LLaMA 3</h2>
@@ -115,7 +80,11 @@ const ChatInterface = () => {
           {isGenerating && <TypingAnimation />}
           <div ref={messagesEndRef} />
         </div>
-        <InputArea onSendMessage={sendMessage} />
+        <InputArea
+          onSendMessage={sendMessage}
+          onStopGeneration={stopGeneration}
+          isGenerating={isGenerating}
+        />
       </div>
     </div>
   );
