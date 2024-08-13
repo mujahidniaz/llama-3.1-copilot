@@ -1,27 +1,27 @@
 .message {
   max-width: 70%;
-  margin-bottom: 20px;
-  align-self: flex-start;
+  margin-bottom: 15px;
+  padding: 10px 15px;
+  border-radius: 15px;
+  font-size: 16px;
+  line-height: 1.4;
 }
 
 .message.user {
   align-self: flex-end;
-}
-
-.message-content {
-  padding: 12px 18px;
-  border-radius: 18px;
-  font-size: 16px;
-  line-height: 1.4;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.user .message-content {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
+  margin-left: auto;
 }
 
-.bot .message-content {
-  background: white;
-  color: #333;
+.message.bot {
+  align-self: flex-start;
+  background-color: #e5e7eb;
+  color: #1f2937;
+}
+
+.messages-container {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
 }

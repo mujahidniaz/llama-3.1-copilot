@@ -4,81 +4,29 @@
   background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
 }
 
+.side-panel-container {
+  width: 25%;
+  min-width: 250px;
+  overflow-y: hidden;
+  z-index: 10;
+}
+
 .side-panel {
-  width: 20%;
+  height: 100vh;
   background: linear-gradient(45deg, #5e72e4 0%, #825ee4 100%);
   padding: 2rem;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  overflow: hidden;
   color: white;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-  position: relative;
-  overflow: hidden;
-}
-
-.side-panel::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.1' fill-rule='evenodd'/%3E%3C/svg%3E");
-  opacity: 0.1;
-}
-
-.logo-container {
-  display: flex;
-  align-items: center;
-  margin-bottom: 2rem;
-}
-
-.logo {
-  margin-right: 1rem;
-}
-
-.logo-container h1 {
-  font-size: 2rem;
-  font-weight: 700;
-  margin: 0;
-}
-
-.welcome-message h2 {
-  font-size: 1.5rem;
-  margin-bottom: 1rem;
-}
-
-.welcome-message p {
-  font-size: 1rem;
-  opacity: 0.8;
-  line-height: 1.5;
-}
-
-.features {
-  margin-top: 2rem;
-}
-
-.feature {
-  display: flex;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.feature-icon {
-  font-size: 1.5rem;
-  margin-right: 0.5rem;
-}
-
-.feature-text {
-  font-size: 0.9rem;
-  opacity: 0.9;
 }
 
 .main-chat {
-  width: 80%;
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .chat-header {
@@ -89,124 +37,123 @@
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.chat-header h2 {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 600;
-}
-
 .messages-container {
   flex-grow: 1;
   overflow-y: auto;
   padding: 20px;
+}
+
+.load-data-section {
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* Toggle Button Styles */
+.toggle-container {
   display: flex;
-  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
 }
 
-/* Custom scrollbar */
-.messages-container::-webkit-scrollbar {
-  width: 6px;
+.toggle-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffffff;
 }
 
-.messages-container::-webkit-scrollbar-track {
-  background: rgba(0, 0, 0, 0.1);
-}
-
-.messages-container::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 3px;
-}
-
-/* ... (previous CSS) */
-
-.ai-animation {
+.toggle-button {
   position: relative;
-  height: 60px;
-  margin: 20px 0;
-  overflow: hidden;
+  width: 50px;
+  height: 26px;
+  background-color: #4b5563;
+  border-radius: 13px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.node {
+.toggle-button.active {
+  background-color: #10b981;
+}
+
+.toggle-switch {
   position: absolute;
-  width: 10px;
-  height: 10px;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  background-color: #ffffff;
   border-radius: 50%;
-  background-color: rgba(255, 255, 255, 0.7);
-  animation: pulse 2s infinite;
+  transition: transform 0.3s ease;
 }
 
-.n1 {
-  left: 10%;
-  top: 20%;
-}
-.n2 {
-  left: 30%;
-  top: 70%;
-  animation-delay: 0.3s;
-}
-.n3 {
-  left: 50%;
-  top: 40%;
-  animation-delay: 0.6s;
-}
-.n4 {
-  left: 70%;
-  top: 80%;
-  animation-delay: 0.9s;
-}
-.n5 {
-  left: 90%;
-  top: 30%;
-  animation-delay: 1.2s;
-}
-.n6 {
-  left: 20%;
-  top: 60%;
-  animation-delay: 1.5s;
+.toggle-button.active .toggle-switch {
+  transform: translateX(24px);
 }
 
-@keyframes pulse {
+/* Load Data Button Styles */
+.load-data-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #3b82f6;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.load-data-button:hover:not(:disabled) {
+  background-color: #2563eb;
+}
+
+.load-data-button:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* Notification Styles */
+.notification {
+  margin-top: 15px;
+  padding: 10px 15px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.notification.success {
+  background-color: #10b981;
+  color: #ffffff;
+}
+
+.notification.error {
+  background-color: #ef4444;
+  color: #ffffff;
+}
+
+/* Add any additional styles from your original CSS here */
+@keyframes heartbeat {
   0% {
-    transform: scale(1);
-    opacity: 1;
+    transform: translateY(0);
   }
-  50% {
-    transform: scale(1.5);
-    opacity: 0.7;
+  20% {
+    transform: translateY(-5px);
   }
-  100% {
-    transform: scale(1);
-    opacity: 1;
+  40% {
+    transform: translateY(0);
+  }
+  60% {
+    transform: translateY(-3px);
+  }
+  80% {
+    transform: translateY(0);
   }
 }
 
-.ai-animation::before,
-.ai-animation::after {
-  content: "";
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(
-    to right,
-    transparent,
-    rgba(255, 255, 255, 0.5),
-    transparent
-  );
-  animation: flow 3s linear infinite;
-}
-
-.ai-animation::after {
-  top: 70%;
-  animation-delay: 1.5s;
-}
-
-@keyframes flow {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
+.heartbeat {
+  animation: heartbeat 1.5s ease-in-out infinite;
 }

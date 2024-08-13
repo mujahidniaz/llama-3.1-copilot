@@ -1,13 +1,14 @@
 import os
-import fitz  # PyMuPDF
-import numpy as np
-import pandas as pd
-from flask import Flask, request
-from flask_socketio import SocketIO, emit
-from flask_cors import CORS
-import ollama
-import marqo
 import threading
+
+import ollama
+from flask import Flask, request, jsonify
+from flask_socketio import SocketIO
+from flask_cors import CORS
+import chromadb
+from chromadb.config import DEFAULT_TENANT, DEFAULT_DATABASE, Settings
+from chromadb.utils import embedding_functions
+from llama_index.core import SimpleDirectoryReader
 
 app = Flask(__name__)
 CORS(app)
@@ -17,14 +18,46 @@ print("Pulling Llama-3.1")
 # Initialize Ollama client
 client = ollama.Client(host='http://localhost:11434')
 client.pull("llama3.1")
+# Initialize ChromaDB client
+chroma_client = chromadb.HttpClient(
+    host="localhost",
+    port=9000,
+    ssl=False,
+    headers=None,
+    settings=Settings(),
+    tenant=DEFAULT_TENANT,
+    database=DEFAULT_DATABASE,
+)
+
+# Create or get ChromaDB collection
+collection = chroma_client.create_collection(
+    name="documents_collection",
+    embedding_function=embedding_functions.DefaultEmbeddingFunction(),  # Chroma will use this to generate embeddings
+    get_or_create=True
+)
 
 # A dictionary to keep track of active streams
 active_streams = {}
 
 
-def handle_message_stream(message, sid):
+def handle_message_stream(message, chat_history, sid):
     try:
-        stream = client.chat(model='llama3.1', messages=[{'role': 'user', 'content': message}], stream=True)
+        results = collection.query(
+            query_texts=[message], n_results=4
+        )
+
+        documents = results['documents'][0]
+        ids = results['ids'][0]
+        context = "\n\n".join(f"Document ID: {id}\nContent:\n{doc}" for id, doc in zip(ids, documents))
+
+        # Construct the full context string
+        full_context = (f"Chat History: {chat_history} \n\nCurrent Context:\n{context} \n\n"
+                        f"Now answer the following query based on the context provided above:\n\n"
+                        f"User Query: {message}")
+        print(full_context)
+
+        # Generate response using LLaMA model
+        stream = client.chat(model='llama3.1', messages=[{'role': 'user', 'content': full_context}], stream=True)
         for chunk in stream:
             # Check if the generation has been stopped by the client
             if active_streams.get(sid) == 'stopped':
@@ -43,8 +76,9 @@ def handle_message_stream(message, sid):
 def handle_message(data):
     sid = request.sid
     message = data.get('message', '')
+    chat_history = data.get('chat_history', '')
     active_streams[sid] = 'active'  # Mark this stream as active
-    thread = threading.Thread(target=handle_message_stream, args=(message, sid))
+    thread = threading.Thread(target=handle_message_stream, args=(message, chat_history, sid))
     thread.start()
 
 
@@ -52,6 +86,40 @@ def handle_message(data):
 def stop_generation():
     sid = request.sid
     active_streams[sid] = 'stopped'  # Mark this stream as stopped
+
+
+def split_document(doc_text, chunk_size=1000):
+    """Split a document into smaller chunks."""
+    return [doc_text[i:i + chunk_size] for i in range(0, len(doc_text), chunk_size)]
+
+
+@app.route('/add_documents', methods=['POST'])
+def add_documents():
+    directory_path = "/Users/mujahidniaz/PycharmProjects/Copilot/data"
+
+    if not directory_path or not os.path.isdir(directory_path):
+        return jsonify({"error": "Invalid directory path"}), 400
+
+    # Use LlamaIndex to read files (or any other method to read documents)
+    documents = SimpleDirectoryReader(directory_path).load_data()
+
+    all_documents = []
+    all_ids = []
+
+    # Split and add each document
+    for doc in documents:
+        chunks = split_document(doc.text)
+        ids = [f"{doc.doc_id}_{i}" for i in range(len(chunks))]
+        all_documents.extend(chunks)
+        all_ids.extend(ids)
+
+    # Add documents to ChromaDB
+    collection.add(
+        documents=all_documents,  # Document chunks
+        ids=all_ids  # Unique IDs for each chunk
+    )
+
+    return jsonify({"status": "Documents added successfully"}), 200
 
 
 if __name__ == '__main__':

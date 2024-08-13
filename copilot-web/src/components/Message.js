@@ -26,15 +26,47 @@ const Message = ({ text, isUser }) => {
       );
     },
     // You can add more custom components for other markdown elements like links, images, etc.
+    table({ node, children, ...props }) {
+      return React.createElement(
+        "table",
+        { border: "1", cellPadding: "5", cellSpacing: "0", ...props },
+        children
+      );
+    },
+  };
+
+  const renderTable = (markdownText) => {
+    // Regular expression to match Markdown table syntax
+    const regex = /!\[.*\]\(.*\) \|.*\n(.*?)\|\s*$/g;
+    let match, tableData;
+
+    while ((match = regex.exec(markdownText))) {
+      tableData = match[1].split("|").map((row) => row.trim());
+      // Add borders and padding to the rendered table
+      return (
+        <table border="1" cellPadding="5" cellSpacing="0">
+          {tableData.map((row, index) => (
+            <tr key={index}>
+              {row.split(",").map((cell, columnIndex) => (
+                <td key={columnIndex}>{cell}</td>
+              ))}
+            </tr>
+          ))}
+        </table>
+      );
+    }
+
+    // If no table is found, just render the original text
+    return (
+      <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
+        {text}
+      </ReactMarkdown>
+    );
   };
 
   return (
     <div className={`message ${isUser ? "user" : "bot"}`}>
-      <div className="message-content">
-        <ReactMarkdown remarkPlugins={[remarkGfm]} components={components}>
-          {text}
-        </ReactMarkdown>
-      </div>
+      <div className="message-content">{renderTable(text)}</div>
     </div>
   );
 };

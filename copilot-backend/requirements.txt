@@ -10,3 +10,5 @@ faiss-cpu
 marqo
 fitz
 pymupdf
+chromadb
+llama-index-vector-stores-chroma

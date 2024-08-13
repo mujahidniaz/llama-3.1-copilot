@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
-import Message from "./Message";
-import io from "socket.io-client";
 import InputArea from "./InputArea";
+import Message from "./Message";
 import SidePanel from "./SidePanel";
+import React, { useState, useEffect, useRef } from "react";
+import io from "socket.io-client";
 import "../styles/ChatInterface.css";
 import TypingAnimation from "./TypingAnimation";
 
@@ -15,13 +15,12 @@ const ChatInterface = () => {
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    // Listen for message chunks
     socket.on("receive_message", (data) => {
       if (generationStopped) return;
 
       setMessages((prevMessages) => {
         const newMessages = [...prevMessages];
-        if (newMessages[newMessages.length - 1].isUser) {
+        if (newMessages[newMessages.length - 1]?.isUser) {
           newMessages.push({ text: data.content, isUser: false });
         } else {
           newMessages[newMessages.length - 1] = {
@@ -33,7 +32,6 @@ const ChatInterface = () => {
       });
     });
 
-    // Listen for generation completion
     socket.on("generation_completed", () => {
       setIsGenerating(false);
     });
@@ -45,7 +43,10 @@ const ChatInterface = () => {
   }, [generationStopped]);
 
   const sendMessage = (message) => {
-    const context = messages.map((msg) => msg.text).join(" ") + " " + message;
+    const chatHistory = messages
+      .slice(-2)
+      .map((msg) => (msg.isUser ? `User: ${msg.text}` : `Bot: ${msg.text}`))
+      .join("\n");
 
     setMessages((prevMessages) => [
       ...prevMessages,
@@ -53,7 +54,10 @@ const ChatInterface = () => {
     ]);
     setIsGenerating(true);
     setGenerationStopped(false);
-    socket.emit("send_message", { message: context });
+    socket.emit("send_message", {
+      message: message,
+      chat_history: chatHistory,
+    });
   };
 
   const stopGeneration = () => {
@@ -68,10 +72,12 @@ const ChatInterface = () => {
 
   return (
     <div className="chat-interface">
-      <SidePanel />
+      <div className="side-panel-container">
+        <SidePanel />
+      </div>
       <div className="main-chat">
         <div className="chat-header">
-          <h2>Chat with LLaMA 3</h2>
+          <h2>Try the Art of Deduction</h2>
         </div>
         <div className="messages-container">
           {messages.map((msg, index) => (
