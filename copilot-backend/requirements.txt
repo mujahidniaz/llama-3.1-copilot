@@ -4,11 +4,6 @@ Flask-CORS
 ollama
 llama_index
 llama-index-embeddings-huggingface
-pandas
-numpy
 faiss-cpu
-marqo
-fitz
-pymupdf
 chromadb
 llama-index-vector-stores-chroma

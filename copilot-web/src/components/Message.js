@@ -4,6 +4,7 @@ import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism"; // Dark theme for code blocks
 import "../styles/Message.css";
+import Table from 'react-bootstrap/Table';
 
 const Message = ({ text, isUser }) => {
   // Components for Markdown elements
@@ -44,7 +45,7 @@ const Message = ({ text, isUser }) => {
       tableData = match[1].split("|").map((row) => row.trim());
       // Add borders and padding to the rendered table
       return (
-        <table border="1" cellPadding="5" cellSpacing="0">
+        <Table className="table table-responsive table-bordered table-stripped" border="1" cellPadding="5" cellSpacing="0">
           {tableData.map((row, index) => (
             <tr key={index}>
               {row.split(",").map((cell, columnIndex) => (
@@ -52,7 +53,7 @@ const Message = ({ text, isUser }) => {
               ))}
             </tr>
           ))}
-        </table>
+        </Table>
       );
     }
 

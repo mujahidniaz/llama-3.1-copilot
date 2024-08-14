@@ -1,21 +1,31 @@
+import React, { useState, useEffect, useRef } from "react";
+import io from "socket.io-client";
 import InputArea from "./InputArea";
 import Message from "./Message";
 import SidePanel from "./SidePanel";
-import React, { useState, useEffect, useRef } from "react";
-import io from "socket.io-client";
-import "../styles/ChatInterface.css";
 import TypingAnimation from "./TypingAnimation";
-
-const socket = io("http://localhost:8000");
+import "../styles/ChatInterface.css";
 
 const ChatInterface = () => {
   const [messages, setMessages] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationStopped, setGenerationStopped] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
   const messagesEndRef = useRef(null);
+  const socketRef = useRef(null);
 
   useEffect(() => {
-    socket.on("receive_message", (data) => {
+    socketRef.current = io("http://localhost:8000");
+
+    socketRef.current.on("connect", () => {
+      setIsConnected(true);
+    });
+
+    socketRef.current.on("disconnect", () => {
+      setIsConnected(false);
+    });
+
+    socketRef.current.on("receive_message", (data) => {
       if (generationStopped) return;
 
       setMessages((prevMessages) => {
@@ -32,17 +42,22 @@ const ChatInterface = () => {
       });
     });
 
-    socket.on("generation_completed", () => {
+    socketRef.current.on("generation_completed", () => {
       setIsGenerating(false);
     });
 
     return () => {
-      socket.off("receive_message");
-      socket.off("generation_completed");
+      socketRef.current.off("connect");
+      socketRef.current.off("disconnect");
+      socketRef.current.off("receive_message");
+      socketRef.current.off("generation_completed");
+      socketRef.current.disconnect();
     };
   }, [generationStopped]);
 
   const sendMessage = (message) => {
+    if (!isConnected) return;
+
     const chatHistory = messages
       .slice(-2)
       .map((msg) => (msg.isUser ? `User: ${msg.text}` : `Bot: ${msg.text}`))
@@ -54,14 +69,14 @@ const ChatInterface = () => {
     ]);
     setIsGenerating(true);
     setGenerationStopped(false);
-    socket.emit("send_message", {
+    socketRef.current.emit("send_message", {
       message: message,
       chat_history: chatHistory,
     });
   };
 
   const stopGeneration = () => {
-    socket.emit("stop_generation");
+    socketRef.current.emit("stop_generation");
     setIsGenerating(false);
     setGenerationStopped(true);
   };
@@ -79,18 +94,28 @@ const ChatInterface = () => {
         <div className="chat-header">
           <h2>Try the Art of Deduction</h2>
         </div>
-        <div className="messages-container">
-          {messages.map((msg, index) => (
-            <Message key={index} text={msg.text} isUser={msg.isUser} />
-          ))}
-          {isGenerating && <TypingAnimation />}
-          <div ref={messagesEndRef} />
-        </div>
-        <InputArea
-          onSendMessage={sendMessage}
-          onStopGeneration={stopGeneration}
-          isGenerating={isGenerating}
-        />
+        {!isConnected ? (
+          <div className="connection-message">
+            <p>Setting things up...</p>
+            <div className="loading-animation"></div>
+          </div>
+        ) : (
+          <>
+            <div className="messages-container">
+              {messages.map((msg, index) => (
+                <Message key={index} text={msg.text} isUser={msg.isUser} />
+              ))}
+              {isGenerating && <TypingAnimation />}
+              <div ref={messagesEndRef} />
+            </div>
+            <InputArea
+              onSendMessage={sendMessage}
+              onStopGeneration={stopGeneration}
+              isGenerating={isGenerating}
+              isConnected={isConnected}
+            />
+          </>
+        )}
       </div>
     </div>
   );

@@ -39,11 +39,24 @@ collection = chroma_client.create_collection(
 # A dictionary to keep track of active streams
 active_streams = {}
 
+SYSTEM_PROMPT = """
+Your name is Sherlock, an AI assistant that answers queries based on local documents and general knowledge. Follow these guidelines:
+1. If relevant information is found in the provided context, use it to answer accurately.
+2. If no relevant information is in the context, state this clearly.
+3. After stating no relevant information was found, answer using your general knowledge.
+4. Always clarify when you're using local document info vs. general knowledge.
+5. Be concise but thorough. Offer to elaborate if needed.
+6. Maintain conversation flow by referring to chat history when appropriate.
+7. If uncertain, state it clearly. Don't make up information.
+8. For vague queries, ask for clarification or suggest related topics.
+
+Your goal is to assist users with accurate, helpful information from documents or general knowledge."""
+
 
 def handle_message_stream(message, chat_history, sid):
     try:
         results = collection.query(
-            query_texts=[message], n_results=4
+            query_texts=[message], n_results=10
         )
 
         documents = results['documents'][0]
@@ -51,13 +64,17 @@ def handle_message_stream(message, chat_history, sid):
         context = "\n\n".join(f"Document ID: {id}\nContent:\n{doc}" for id, doc in zip(ids, documents))
 
         # Construct the full context string
-        full_context = (f"Chat History: {chat_history} \n\nCurrent Context:\n{context} \n\n"
+        full_context = (f"Chat History: {chat_history} \n\n"
+                        f"Current Context:\n{context} \n\n"
                         f"Now answer the following query based on the context provided above:\n\n"
                         f"User Query: {message}")
-        print(full_context)
 
         # Generate response using LLaMA model
-        stream = client.chat(model='llama3.1', messages=[{'role': 'user', 'content': full_context}], stream=True)
+        stream = client.chat(model='llama3.1', messages=[
+            {'role': 'system', 'content': SYSTEM_PROMPT},
+            {'role': 'user', 'content': full_context}
+
+        ], stream=True)
         for chunk in stream:
             # Check if the generation has been stopped by the client
             if active_streams.get(sid) == 'stopped':
@@ -92,10 +109,13 @@ def split_document(doc_text, chunk_size=1000):
     """Split a document into smaller chunks."""
     return [doc_text[i:i + chunk_size] for i in range(0, len(doc_text), chunk_size)]
 
+@app.route('/health')
+def health_check():
+    return jsonify({"status": "healthy"}), 200
 
 @app.route('/add_documents', methods=['POST'])
 def add_documents():
-    directory_path = "/Users/mujahidniaz/PycharmProjects/Copilot/data"
+    directory_path = r"C:\Users\977mniaz\PycharmProjects\llama-3.1-copilot\data"
 
     if not directory_path or not os.path.isdir(directory_path):
         return jsonify({"error": "Invalid directory path"}), 400

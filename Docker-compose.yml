@@ -18,8 +18,8 @@ services:
 #    build:
 #      context: copilot-web/
 #    container_name: react-app
-#    depends_on:
-#      - copilot_backend
+##    depends_on:
+##      - copilot_backend
 #    environment:
 #      - FLASK_ENV=development
 #      - LLAMA_HOST=http://ollama-api:11434  # Corrected for internal Docker network
@@ -32,7 +32,7 @@ services:
     ports:
       - "11434:11434"
     volumes:
-      - ollama:/root/.ollama
+      - ./app_data/ollama_data:/root/.ollama  # Maps host directory to container directory
   chromadb:
     image: chromadb/chroma:latest
     volumes:
