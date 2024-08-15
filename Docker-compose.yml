@@ -1,33 +1,39 @@
 version: '3.8'
 
 services:
-#  copilot_backend:
-#    build:
-#      context: copilot-backend/
-#    container_name: flask-api
-#    restart: always
-#    ports:
-#      - "8000:8000"
+  copilot_backend:
+    image: mujahid002/sherlock-ai-backend
+    container_name: flask-api
+    restart: always
+    ports:
+      - "8000:8000"
+    depends_on:
+      - ollama-api
+    volumes:
+      - ./data:/data  # Maps host directory to container directory
+    environment:
+      - FLASK_ENV=development
+      - CHUNK_SIZE=5000
+      - OLLAMA_MODEL=llama3.1
+      - LLAMA_HOST=http://ollama-api:11434  # Corrected for internal Docker network
+
+  copilot_web:
+    image: mujahid002/sherlock-ai-frontend
+    container_name: react-app
 #    depends_on:
-#      - ollama-api
-#    environment:
-#      - FLASK_ENV=development
-#      - LLAMA_HOST=http://ollama-api:11434  # Corrected for internal Docker network
-#
-#  copilot_web:
-#    build:
-#      context: copilot-web/
-#    container_name: react-app
-##    depends_on:
-##      - copilot_backend
-#    environment:
-#      - FLASK_ENV=development
-#      - LLAMA_HOST=http://ollama-api:11434  # Corrected for internal Docker network
-#    ports:
-#      - "3000:80"
+#      - copilot_backend
+    ports:
+      - "3000:80"
   ollama-api:
     image: ollama/ollama
     container_name: ollama-api
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [ gpu ]
     restart: always
     ports:
       - "11434:11434"

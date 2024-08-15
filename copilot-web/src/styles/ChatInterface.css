@@ -178,3 +178,92 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* Additional styles for SidePanel */
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 100px;
+  width: 100%;
+  align-content: center;
+  justify-content: center;
+}
+
+.logo {
+  max-width: 100%;
+  height: auto;
+}
+
+.app-title {
+  font-size: 30px;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.features {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-container label {
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.input-container input {
+  width: 100%;
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  color: #ffffff;
+  font-size: 14px;
+  transition: all 0.3s ease;
+}
+
+.input-container input:focus {
+  outline: none;
+  background-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.input-container input::-webkit-inner-spin-button,
+.input-container input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.input-container input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.load-data-button {
+  margin-bottom: 20px;
+}
+
+/* Improve scrollbar styling */
+.side-panel::-webkit-scrollbar {
+  width: 8px;
+}
+
+.side-panel::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.side-panel::-webkit-scrollbar-thumb {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+.side-panel::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+}

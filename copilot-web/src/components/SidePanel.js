@@ -1,10 +1,16 @@
-import axios from "axios";
 import React, { useState } from "react";
+import axios from "axios";
 
-const SidePanel = () => {
+const SidePanel = ({
+  useKnowledgeBase,
+  setUseKnowledgeBase,
+  relevantDocuments,
+  setRelevantDocuments,
+  chatHistoryMessages,
+  setChatHistoryMessages,
+}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [notification, setNotification] = useState(null);
-  const [useKnowledgeBase, setUseKnowledgeBase] = useState(false);
 
   const handleLoadData = async (e) => {
     e.preventDefault();
@@ -26,33 +32,11 @@ const SidePanel = () => {
 
   return (
     <div className="side-panel">
-      <div
-        className="logo-container"
-        style={{ display: "flex", alignItems: "center", marginBottom: "20px" }}
-      >
-        <div className="logo" style={{ marginRight: "10px" }}>
-          <svg viewBox="0 0 100 100" width="40" height="40">
-            <circle cx="50" cy="50" r="45" fill="#ffffff" />
-            <text
-              x="50"
-              y="50"
-              fontFamily="Arial"
-              fontSize="40"
-              fill="#5e72e4"
-              textAnchor="middle"
-              dominantBaseline="central"
-            >
-              S
-            </text>
-          </svg>
-        </div>
-        <h1 style={{ fontSize: "30px", fontWeight: "bold" }}>Sherlock</h1>
-      </div>
+      <div className="logo-container">
+      <img src="img/logo.png" alt="Sherlock Logo" className="logo" width="300" />
+    </div>
 
-      <div
-        className="heartbeat-container"
-        style={{ marginBottom: "20px", textAlign: "center" }}
-      >
+      <div className="heartbeat-container">
         <svg width="100" height="50" viewBox="0 0 100 50">
           <polyline
             points="0,25 20,25 30,10 40,40 50,25 60,25 70,10 80,40 90,25 100,25"
@@ -74,14 +58,37 @@ const SidePanel = () => {
             <div className="toggle-switch"></div>
           </div>
         </div>
-
         <button
           className={`load-data-button ${isLoading ? "disabled" : ""}`}
           onClick={handleLoadData}
           disabled={isLoading}
         >
-          {isLoading ? "Loading..." : "Load Knowledge Base"}
+          {isLoading ? "Loading..." : "Reload Knowledge Base"}
         </button>
+        <h3>Chat Settings:</h3>
+        <div className="input-container">
+          <label htmlFor="relevantDocs">Relevant Documents to Include (No of Docs):</label>
+          <input
+            type="number"
+            id="relevantDocs"
+            value={relevantDocuments}
+            onChange={(e) => setRelevantDocuments(Math.max(1, parseInt(e.target.value) || 1))}
+            min="1"
+          />
+        </div>
+
+        <div className="input-container">
+          <label htmlFor="chatHistory">Send Last Messages as History:</label>
+          <input
+            type="number"
+            id="chatHistory"
+            value={chatHistoryMessages}
+            onChange={(e) => setChatHistoryMessages(Math.max(1, parseInt(e.target.value) || 1))}
+            min="0"
+          />
+        </div>
+
+
       </div>
 
       {notification && (

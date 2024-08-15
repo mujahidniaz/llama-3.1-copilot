@@ -9,19 +9,51 @@ import chromadb
 from chromadb.config import DEFAULT_TENANT, DEFAULT_DATABASE, Settings
 from chromadb.utils import embedding_functions
 from llama_index.core import SimpleDirectoryReader
+import os
+
+
+def get_env_as_int(var_name, default=0):
+    """
+    Retrieve an environment variable and convert it to an integer.
+
+    :param var_name: Name of the environment variable.
+    :param default: Default value to return if the environment variable is not set
+                    or cannot be converted to an integer. Defaults to 0.
+    :return: Integer value of the environment variable or the default value.
+    """
+    # Retrieve the environment variable as a string
+    env_var_str = os.getenv(var_name, str(default))  # Default to str(default) if not set
+
+    try:
+        # Convert the string to an integer
+        return int(env_var_str)
+    except ValueError:
+        # Handle cases where conversion fails
+        print(f"Warning: Environment variable '{var_name}' is not a valid integer. Returning default value.")
+        return default
+
+
+# Example usage
+
 
 app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
-print("Pulling Llama-3.1")
-
+MODEL = os.environ.get('OLLAMA_MODEL', "mistral:7b-instruct-v0.3-q2_K")
+CHROMA_HOST = os.environ.get('CHROMA_HOST', "chromadb")
+CHROMA_PORT = os.environ.get('CHROMA_PORT', "8000")
+CHROMA_COLLECTION = os.environ.get('CHROMA_COLLECTION', "documents_collection")
+OLLAMA_HOST = os.environ.get('OLLAMA_HOST', "http://ollama-api:11434")
+CHUNK_SIZE = get_env_as_int('CHUNK_SIZE', 5000)
 # Initialize Ollama client
-client = ollama.Client(host='http://localhost:11434')
-client.pull("llama3.1")
+client = ollama.Client(host=OLLAMA_HOST)
+print(f"Pulling {MODEL}")
+client.pull(model=MODEL)
+# client.generate(model=MODEL,stream=True)
 # Initialize ChromaDB client
 chroma_client = chromadb.HttpClient(
-    host="localhost",
-    port=9000,
+    host=CHROMA_HOST,
+    port=CHROMA_PORT,
     ssl=False,
     headers=None,
     settings=Settings(),
@@ -30,11 +62,7 @@ chroma_client = chromadb.HttpClient(
 )
 
 # Create or get ChromaDB collection
-collection = chroma_client.create_collection(
-    name="documents_collection",
-    embedding_function=embedding_functions.DefaultEmbeddingFunction(),  # Chroma will use this to generate embeddings
-    get_or_create=True
-)
+
 
 # A dictionary to keep track of active streams
 active_streams = {}
@@ -49,38 +77,49 @@ Your name is Sherlock, an AI assistant that answers queries based on local docum
 6. Maintain conversation flow by referring to chat history when appropriate.
 7. If uncertain, state it clearly. Don't make up information.
 8. For vague queries, ask for clarification or suggest related topics.
+9. Always provide citations if local knowledge is used otherwise mentioned that its from the general knowledge and not from the documents.
 
 Your goal is to assist users with accurate, helpful information from documents or general knowledge."""
 
 
-def handle_message_stream(message, chat_history, sid):
+def handle_message_stream(message, chat_history, use_knowledge_base, relevant_documents, sid):
     try:
-        results = collection.query(
-            query_texts=[message], n_results=10
+        print(chat_history)
+        context = ""
+        collection = chroma_client.create_collection(
+            name=CHROMA_COLLECTION,
+            embedding_function=embedding_functions.DefaultEmbeddingFunction(),
+            # Chroma will use this to generate embeddings
+            get_or_create=True
         )
-
-        documents = results['documents'][0]
-        ids = results['ids'][0]
-        context = "\n\n".join(f"Document ID: {id}\nContent:\n{doc}" for id, doc in zip(ids, documents))
+        if use_knowledge_base:
+            results = collection.query(
+                query_texts=[message], n_results=relevant_documents
+            )
+            documents = results['documents'][0]
+            ids = results['ids'][0]
+            context = "\n\n".join(f"Document ID: {id}\nContent:\n{doc}" for id, doc in zip(ids, documents))
 
         # Construct the full context string
-        full_context = (f"Chat History: {chat_history} \n\n"
-                        f"Current Context:\n{context} \n\n"
-                        f"Now answer the following query based on the context provided above:\n\n"
-                        f"User Query: {message}")
+        full_context = f"User Query: {message}\n\n"
+        if chat_history:
+            full_context = f"Chat History: {chat_history}\n\n" + full_context
+        if context:
+            full_context = f"Current Context:\n{context}\n\n" + full_context
 
         # Generate response using LLaMA model
-        stream = client.chat(model='llama3.1', messages=[
+        stream = client.chat(model=MODEL, keep_alive=-1, messages=[
             {'role': 'system', 'content': SYSTEM_PROMPT},
             {'role': 'user', 'content': full_context}
-
         ], stream=True)
+
         for chunk in stream:
             # Check if the generation has been stopped by the client
             if active_streams.get(sid) == 'stopped':
                 break
             socketio.emit('receive_message', {'content': chunk['message']['content']}, room=sid)
         socketio.emit('generation_completed', room=sid)
+
     except Exception as e:
         print(f"Error: {e}")
         socketio.emit('receive_message', {'content': "Error generating response"}, room=sid)
@@ -94,8 +133,12 @@ def handle_message(data):
     sid = request.sid
     message = data.get('message', '')
     chat_history = data.get('chat_history', '')
+    use_knowledge_base = data.get('use_knowledge_base', False)
+    relevant_documents = data.get('relevant_documents', 5)
+    print(relevant_documents)
     active_streams[sid] = 'active'  # Mark this stream as active
-    thread = threading.Thread(target=handle_message_stream, args=(message, chat_history, sid))
+    thread = threading.Thread(target=handle_message_stream,
+                              args=(message, chat_history, use_knowledge_base, relevant_documents, sid))
     thread.start()
 
 
@@ -105,23 +148,35 @@ def stop_generation():
     active_streams[sid] = 'stopped'  # Mark this stream as stopped
 
 
-def split_document(doc_text, chunk_size=1000):
+def split_document(doc_text, chunk_size=CHUNK_SIZE):
     """Split a document into smaller chunks."""
     return [doc_text[i:i + chunk_size] for i in range(0, len(doc_text), chunk_size)]
+
 
 @app.route('/health')
 def health_check():
     return jsonify({"status": "healthy"}), 200
 
+
 @app.route('/add_documents', methods=['POST'])
 def add_documents():
-    directory_path = r"C:\Users\977mniaz\PycharmProjects\llama-3.1-copilot\data"
+    try:
+        chroma_client.delete_collection(CHROMA_COLLECTION)
+    except:
+        print("collection doesnt exist!!")
+    collection = chroma_client.create_collection(
+        name=CHROMA_COLLECTION,
+        embedding_function=embedding_functions.DefaultEmbeddingFunction(),
+        # Chroma will use this to generate embeddings
+        get_or_create=True
+    )
+    directory_path = "/data"
 
     if not directory_path or not os.path.isdir(directory_path):
         return jsonify({"error": "Invalid directory path"}), 400
 
     # Use LlamaIndex to read files (or any other method to read documents)
-    documents = SimpleDirectoryReader(directory_path).load_data()
+    documents = SimpleDirectoryReader(directory_path,filename_as_id=True).load_data()
 
     all_documents = []
     all_ids = []
@@ -129,7 +184,7 @@ def add_documents():
     # Split and add each document
     for doc in documents:
         chunks = split_document(doc.text)
-        ids = [f"{doc.doc_id}_{i}" for i in range(len(chunks))]
+        ids = [f"{os.path.basename(doc.doc_id)}_{i}" for i in range(len(chunks))]
         all_documents.extend(chunks)
         all_ids.extend(ids)
 
