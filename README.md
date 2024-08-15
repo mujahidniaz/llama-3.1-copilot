@@ -30,7 +30,7 @@ The system consists of four main components:
 
 ## Prerequisites
 
-- Docker and Docker Compose
+- Docker and Docker Compose (For installation WSL2 Docker see https://gist.github.com/martinsam16/4492957e3bbea34046f2c8b49c3e5ac0)
 - NVIDIA GPU with CUDA support (for optimal performance)
 - Git
 
