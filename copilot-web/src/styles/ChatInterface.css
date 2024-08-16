@@ -5,27 +5,28 @@
 }
 
 .side-panel-container {
-  min-width: 230px;
-  overflow-y: hidden;
+  width: 350px; /* Set a fixed width */
+  min-width: 350px; /* Ensure it doesn't shrink below this width */
+  overflow-y: hidden; /* Allow scrolling if content is too long */
   z-index: 10;
 }
 
 .side-panel {
-  height: 100vh;
+  height: 100%;
   background: linear-gradient(45deg, #5e72e4 0%, #825ee4 100%);
   padding: 2rem;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow-y: auto; /* Changed from hidden to auto */
   color: white;
   box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .main-chat {
-  flex-grow: 1;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
+  overflow: hidden; /* Changed from overflow-y: auto to overflow: hidden */
 }
 
 .chat-header {
@@ -153,9 +154,9 @@
   }
 }
 
-.heartbeat {
+/* .heartbeat {
   animation: heartbeat 1.5s ease-in-out infinite;
-}
+} */
 .connection-message {
   display: flex;
   flex-direction: column;
@@ -187,7 +188,7 @@
 .logo-container {
   display: flex;
   align-items: center;
-  margin-bottom: 100px;
+  margin-bottom: 10px;
   width: 100%;
   align-content: center;
   justify-content: center;
