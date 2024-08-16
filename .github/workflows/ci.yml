@@ -6,7 +6,24 @@ on:
       - main
 
 jobs:
+  check_changes:
+    runs-on: ubuntu-latest
+    outputs:
+      frontend: ${{ steps.filter.outputs.frontend }}
+      backend: ${{ steps.filter.outputs.backend }}
+    steps:
+    - uses: actions/checkout@v3
+    - uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          frontend:
+            - 'copilot-web/**'
+          backend:
+            - 'copilot-backend/**'
+
   build-and-push:
+    needs: check_changes
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -29,7 +46,31 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
+      - name: Set up Node.js
+        if: needs.check_changes.outputs.frontend == 'true'
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+
+      - name: Cache npm dependencies
+        if: needs.check_changes.outputs.frontend == 'true'
+        uses: actions/cache@v3
+        with:
+          path: ~/.npm
+          key: ${{ runner.OS }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.OS }}-node-
+
+      - name: Build React Frontend
+        if: needs.check_changes.outputs.frontend == 'true'
+        run: |
+          cd ./copilot-web
+          npm ci
+          npm run build
+          cd ..
+
       - name: Build and push frontend
+        if: needs.check_changes.outputs.frontend == 'true'
         uses: docker/build-push-action@v4
         with:
           context: ./copilot-web
@@ -39,6 +80,7 @@ jobs:
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
 
       - name: Build and push backend
+        if: needs.check_changes.outputs.backend == 'true'
         uses: docker/build-push-action@v4
         with:
           context: ./copilot-backend
