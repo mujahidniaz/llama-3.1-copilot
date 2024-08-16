@@ -33,6 +33,27 @@ def get_env_as_int(var_name, default=0):
         return default
 
 
+def get_env_as_float(var_name, default=0.5):
+    """
+    Retrieve an environment variable and convert it to an integer.
+
+    :param var_name: Name of the environment variable.
+    :param default: Default value to return if the environment variable is not set
+                    or cannot be converted to an integer. Defaults to 0.
+    :return: Integer value of the environment variable or the default value.
+    """
+    # Retrieve the environment variable as a string
+    env_var_str = os.getenv(var_name, str(default))  # Default to str(default) if not set
+
+    try:
+        # Convert the string to an integer
+        return float(env_var_str)
+    except ValueError:
+        # Handle cases where conversion fails
+        print(f"Warning: Environment variable '{var_name}' is not a valid integer. Returning default value.")
+        return default
+
+
 # Example usage
 
 
@@ -45,10 +66,13 @@ CHROMA_PORT = os.environ.get('CHROMA_PORT', "8000")
 CHROMA_COLLECTION = os.environ.get('CHROMA_COLLECTION', "documents_collection")
 OLLAMA_HOST = os.environ.get('OLLAMA_HOST', "http://ollama-api:11434")
 CHUNK_SIZE = get_env_as_int('CHUNK_SIZE', 5000)
+TEMP_KNOWLEDGE_BASE = get_env_as_float('TEMP_KNOWLEDGE_BASE', 0.4)
+TEMP_GEN_KNOWLEDGE = get_env_as_float('TEMP_GEN_KNOWLEDGE', 0.7)
 # Initialize Ollama client
 client = ollama.Client(host=OLLAMA_HOST)
 print(f"Pulling {MODEL}")
 client.pull(model=MODEL)
+client.generate(model=MODEL, prompt='test', keep_alive=-1)
 # client.generate(model=MODEL,stream=True)
 # Initialize ChromaDB client
 chroma_client = chromadb.HttpClient(
@@ -84,6 +108,8 @@ Your goal is to assist users with accurate, helpful information from documents o
 
 def handle_message_stream(message, chat_history, use_knowledge_base, relevant_documents, sid):
     try:
+        options = {"temperature": TEMP_GEN_KNOWLEDGE}
+
         print(chat_history)
         context = ""
         collection = chroma_client.create_collection(
@@ -93,6 +119,8 @@ def handle_message_stream(message, chat_history, use_knowledge_base, relevant_do
             get_or_create=True
         )
         if use_knowledge_base:
+            options = {
+                "temperature": TEMP_KNOWLEDGE_BASE}
             results = collection.query(
                 query_texts=[message], n_results=relevant_documents
             )
@@ -111,7 +139,7 @@ def handle_message_stream(message, chat_history, use_knowledge_base, relevant_do
         stream = client.chat(model=MODEL, keep_alive=-1, messages=[
             {'role': 'system', 'content': SYSTEM_PROMPT},
             {'role': 'user', 'content': full_context}
-        ], stream=True)
+        ], options=options, stream=True)
 
         for chunk in stream:
             # Check if the generation has been stopped by the client
@@ -176,7 +204,7 @@ def add_documents():
         return jsonify({"error": "Invalid directory path"}), 400
 
     # Use LlamaIndex to read files (or any other method to read documents)
-    documents = SimpleDirectoryReader(directory_path,filename_as_id=True).load_data()
+    documents = SimpleDirectoryReader(directory_path, filename_as_id=True).load_data()
 
     all_documents = []
     all_ids = []

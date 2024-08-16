@@ -1,0 +1,47 @@
+name: Docker Image CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'  # Use the specific Node.js version required
+
+      - name: Install and Build Frontend
+        run: |
+          cd ./copilot-web
+          npm install
+          npm run build
+          cd ..
+
+      - name: Set up Docker Environment
+        uses: docker/setup-buildx-action@v1
+
+      - name: Run Build and Push Script
+        env:
+          DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
+          DOCKER_HUB_PASSWORD: ${{ secrets.DOCKER_HUB_PASSWORD }}
+        run: |
+          chmod +x ./build-push-script.sh
+          ./build-push-script.sh
+
+#      - name: Deploy to Remote Server
+#        uses: appleboy/ssh-action@master
+#        with:
+#          host: ${{ secrets.REMOTE_HOST }}
+#          username: ${{ secrets.REMOTE_USER }}
+#          password: ${{ secrets.SSH_PASSWORD }}
+#          port: 22  # Specify your SSH port if it's not the default
+#          script: |
+#            cd /home/bestbottle/
+#            ./script.sh
