@@ -89,13 +89,16 @@ jobs:
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
 
-      # Temp fix
-      # https://github.com/docker/build-push-action/issues/252
-      # https://github.com/moby/buildkit/issues/1896
       - name: Move cache
         run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+          if [ -d /tmp/.buildx-cache-new ]; then
+            rm -rf /tmp/.buildx-cache
+            mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+          fi
+
+      - name: Check if anything was built
+        if: needs.check_changes.outputs.frontend != 'true' && needs.check_changes.outputs.backend != 'true'
+        run: echo "No changes detected in frontend or backend. Skipping build and push."
 
 #      - name: Deploy to Remote Server
 #        uses: appleboy/ssh-action@master
