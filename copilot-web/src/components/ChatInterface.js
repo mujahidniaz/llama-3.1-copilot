@@ -1,17 +1,17 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import io from "socket.io-client";
+import "../styles/ChatInterface.css";
 import InputArea from "./InputArea";
 import Message from "./Message";
 import SidePanel from "./SidePanel";
 import TypingAnimation from "./TypingAnimation";
-import "../styles/ChatInterface.css";
 
 const ChatInterface = () => {
   const [messages, setMessages] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationStopped, setGenerationStopped] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
-  const [useKnowledgeBase, setUseKnowledgeBase] = useState(false);
+  const [useKnowledgeBase, setUseKnowledgeBase] = useState(true);
   const [relevantDocuments, setRelevantDocuments] = useState(10);
   const [chatHistoryMessages, setChatHistoryMessages] = useState(0);
   const messagesEndRef = useRef(null);
@@ -61,12 +61,14 @@ const ChatInterface = () => {
   const sendMessage = (message) => {
     if (!isConnected) return;
 
-    var chatHistory=null
-    if (chatHistoryMessages>0)
-      chatHistory= messages
-      .slice(-chatHistoryMessages)
-      .map((msg) => (msg.isUser ? `User: ${msg.text}` : `System: ${msg.text}`))
-      .join("\n");
+    var chatHistory = null;
+    if (chatHistoryMessages > 0)
+      chatHistory = messages
+        .slice(-chatHistoryMessages)
+        .map((msg) =>
+          msg.isUser ? `User: ${msg.text}` : `System: ${msg.text}`
+        )
+        .join("\n");
 
     setMessages((prevMessages) => [
       ...prevMessages,
@@ -78,7 +80,7 @@ const ChatInterface = () => {
       message: message,
       chat_history: chatHistory,
       use_knowledge_base: useKnowledgeBase,
-      relevant_documents: relevantDocuments
+      relevant_documents: relevantDocuments,
     });
   };
 
@@ -106,11 +108,13 @@ const ChatInterface = () => {
       </div>
       <div className="main-chat">
         <div className="chat-header">
-          <h2 style={{fontFamily:"Exo"}}>TRY THE ART OF DEDUCTION</h2>
+          <h2 style={{ fontFamily: "Exo" }}>TRY THE ART OF DEDUCTION</h2>
         </div>
         {!isConnected ? (
           <div className="connection-message">
-            <p style={{fontSize:"18px"}}>Loading Large Language Models & Setting things up...</p>
+            <p style={{ fontSize: "18px" }}>
+              Loading Large Language Models & Setting things up...
+            </p>
             <div className="loading-animation"></div>
           </div>
         ) : (
