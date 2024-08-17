@@ -60,12 +60,12 @@ def get_env_as_float(var_name, default=0.5):
 app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
-MODEL = os.environ.get('OLLAMA_MODEL', "mistral:7b-instruct-v0.3-q2_K")
+MODEL = os.environ.get('OLLAMA_MODEL', "llama3.1")
 CHROMA_HOST = os.environ.get('CHROMA_HOST', "chromadb")
 CHROMA_PORT = os.environ.get('CHROMA_PORT', "8000")
 CHROMA_COLLECTION = os.environ.get('CHROMA_COLLECTION', "documents_collection")
 OLLAMA_HOST = os.environ.get('OLLAMA_HOST', "http://ollama-api:11434")
-CHUNK_SIZE = get_env_as_int('CHUNK_SIZE', 5000)
+CHUNK_SIZE = get_env_as_int('CHUNK_SIZE', 1000)
 TEMP_KNOWLEDGE_BASE = get_env_as_float('TEMP_KNOWLEDGE_BASE', 0.4)
 TEMP_GEN_KNOWLEDGE = get_env_as_float('TEMP_GEN_KNOWLEDGE', 0.7)
 # Initialize Ollama client
@@ -177,8 +177,10 @@ def stop_generation():
 
 
 def split_document(doc_text, chunk_size=CHUNK_SIZE):
-    """Split a document into smaller chunks."""
-    return [doc_text[i:i + chunk_size] for i in range(0, len(doc_text), chunk_size)]
+    """Split a document into smaller chunks based on word count."""
+    words = doc_text.split()
+    return [' '.join(words[i:i + chunk_size]) for i in range(0, len(words), chunk_size)]
+
 
 
 @app.route('/health')

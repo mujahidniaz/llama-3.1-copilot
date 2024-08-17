@@ -13,7 +13,7 @@ services:
       - ./data:/data  # Maps host directory to container directory
     environment:
       - FLASK_ENV=development
-      - CHUNK_SIZE=5000
+      - CHUNK_SIZE=1000
       - OLLAMA_MODEL=llama3.1
       - LLAMA_HOST=http://ollama-api:11434  # Corrected for internal Docker network
 
