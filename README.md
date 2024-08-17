@@ -1,7 +1,9 @@
 # Sherlock: AI-Powered Document Analysis Assistant
 
 Sherlock is an AI-powered chat assistant that combines local document knowledge with general intelligence to provide accurate and context-aware responses to user queries. This project integrates various components including a Flask backend, React frontend, Ollama for AI model serving, and ChromaDB for efficient document storage and retrieval.
-
+## Screenshots:
+![img1.png](screenshots/img1.png)
+![img2.png](screenshots/img2.png)
 ## Table of Contents
 - [Features](#features)
 - [System Architecture](#system-architecture)
