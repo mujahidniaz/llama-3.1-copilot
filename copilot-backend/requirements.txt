@@ -7,3 +7,7 @@ llama-index-embeddings-huggingface
 faiss-cpu
 chromadb
 llama-index-vector-stores-chroma
+torch
+transformers
+python-pptx
+Pillow
