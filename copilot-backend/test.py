@@ -17,7 +17,7 @@ chroma_client = chromadb.HttpClient(
 # print(wordList)
 collection=chroma_client.get_or_create_collection("documents_collection")
 results = collection.query(
-    query_texts=["whats Michael working on?"], n_results=2
+    query_texts=["whats Mujahid working on?"], n_results=2
 )
 print(results)
 # import os
