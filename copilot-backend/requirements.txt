@@ -1,7 +1,6 @@
 Flask
 Flask-SocketIO
 Flask-CORS
-ollama
 llama_index
 llama-index-embeddings-huggingface
 faiss-cpu
@@ -11,3 +10,4 @@ torch
 transformers
 python-pptx
 Pillow
+ollama

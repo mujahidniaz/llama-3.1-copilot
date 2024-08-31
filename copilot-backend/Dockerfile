@@ -1,26 +1,16 @@
-# Use a smaller base image for the build stage
-FROM python:3.11-slim AS build
-
+# Use the official Python image from the Docker Hub
+FROM python
 # Set the working directory
 WORKDIR /app
-
+RUN mkdir /data
 # Copy the requirements file into the container
-COPY requirements.txt .
+COPY requirements.txt requirements.txt
 
 # Install the dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install -r requirements.txt
 
 # Copy the rest of the application code into the container
 COPY . .
-
-# Use a minimal runtime image
-FROM python:3.11-slim
-
-# Set the working directory
-WORKDIR /app
-
-# Copy the installed dependencies from the build stage
-COPY --from=build /app /app
 
 # Expose port 8000
 EXPOSE 8000
