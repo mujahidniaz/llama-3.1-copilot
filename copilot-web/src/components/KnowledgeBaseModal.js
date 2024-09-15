@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { X, Trash2, Upload, Loader, FileText } from "lucide-react";
-import "../styles/KnowledgeBaseModal.css";
+import "./KnowledgeBaseModal.css";
 
 const Alert = ({ children, variant = "default" }) => (
   <div
