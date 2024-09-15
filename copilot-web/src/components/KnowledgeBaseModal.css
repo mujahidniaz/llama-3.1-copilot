@@ -38,3 +38,19 @@
   background-color: #6c757d;
   border-color: #6c757d;
 }
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+}
+
+.modal-title {
+  margin-bottom: 0;
+}
+
+.modal-header .btn-group {
+  display: flex;
+  align-items: center;
+}

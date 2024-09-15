@@ -132,7 +132,7 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
       <div className="modal-dialog modal-lg" role="document">
         <div className="modal-content">
           <div className="modal-header">
-            <h3 className="modal-title">Knowledge Base</h3>
+            <h3 className="modal-title ms-3">Knowledge Base</h3>
             <div className="d-flex align-items-center">
               <button
                 onClick={handleUpload}
@@ -152,7 +152,7 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
               </button>
               <button
                 type="button"
-                className="btn btn-outline-secondary btn-sm"
+                className="btn btn-outline-secondary btn-sm ms-3"
                 aria-label="Close"
                 onClick={onClose}
               >
