@@ -150,61 +150,59 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
               )}
             </div>
 
-            <div className="button-container d-flex justify-content-end mb-3">
-              <button
-                onClick={handleUpload}
-                className="btn btn-xs btn-success btn-icon mr-2"
-                disabled={selectedUploadFiles.length === 0}
+            <div className="d-flex justify-content-between align-items-center mb-3">
+              <div
+                className={`upload-area ${dragOver ? "drag-over" : ""}`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                style={{ flex: '1', marginRight: '10px', padding: '10px' }}
               >
-                <Upload size={12} />
-                Upload
-              </button>
-              <button
-                onClick={handleDelete}
-                className="btn btn-xs btn-danger btn-icon"
-                disabled={selectedFiles.length === 0}
-              >
-                <Trash2 size={12} />
-                Delete
-              </button>
-            </div>
-
-            <div
-              className={`upload-area ${dragOver ? "drag-over" : ""}`}
-              onDragOver={handleDragOver}
-              onDragLeave={handleDragLeave}
-              onDrop={handleDrop}
-            >
-              <FileText size={48} className="mb-3" />
-              <p>
-                Drag and drop files here or select files using the input below
-              </p>
-              <div className="d-flex justify-content-center align-items-center mt-3">
+                <FileText size={24} className="mb-2" />
+                <p className="mb-0" style={{ fontSize: '0.9rem' }}>
+                  Drag and drop files here or
+                </p>
                 <input
                   type="file"
                   multiple
                   onChange={handleFileInputChange}
                   className="file-input"
                   id="file-input"
+                  style={{ width: '100%', marginTop: '5px' }}
                 />
+              </div>
+              <div>
+                <button
+                  onClick={handleUpload}
+                  className="btn btn-sm btn-success btn-icon mr-2"
+                  disabled={selectedUploadFiles.length === 0}
+                >
+                  <Upload size={12} />
+                  Upload
+                </button>
+                <button
+                  onClick={handleDelete}
+                  className="btn btn-sm btn-danger btn-icon"
+                  disabled={selectedFiles.length === 0}
+                >
+                  <Trash2 size={12} />
+                  Delete
+                </button>
               </div>
             </div>
 
             {selectedUploadFiles.length > 0 && (
-              <div className="mt-3">
-                <p>{selectedUploadFiles.length} file(s) selected for upload</p>
-                <ul>
+              <div className="mb-3">
+                <p className="mb-1">{selectedUploadFiles.length} file(s) selected for upload</p>
+                <ul className="list-unstyled">
                   {selectedUploadFiles.map((file, index) => (
-                    <li key={index}>{file.name}</li>
+                    <li key={index} className="text-muted" style={{ fontSize: '0.9rem' }}>{file.name}</li>
                   ))}
                 </ul>
               </div>
             )}
 
-            <div
-              className="file-list mt-4"
-              style={{ maxHeight: "300px", overflowY: "auto" }}
-            >
+            <div className="file-list" style={{ height: "calc(100vh - 300px)", overflowY: "auto" }}>
               <table className="table table-bordered table-striped w-100">
                 <thead
                   style={{

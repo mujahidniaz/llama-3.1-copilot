@@ -214,9 +214,7 @@
 .upload-area {
   border: 2px dashed #ced4da;
   border-radius: 8px;
-  padding: 30px;
   text-align: center;
-  margin-bottom: 1rem;
   background-color: #f8f9fa;
   transition: all 0.3s ease;
 }
@@ -227,13 +225,17 @@
 }
 
 .upload-area p {
-  margin-bottom: 15px;
+  margin-bottom: 5px;
 }
 
 .file-list {
-  max-height: 300px;
-  overflow-y: auto;
-  margin-top: 1rem;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.file-input {
+  font-size: 0.9rem;
 }
 
 .table {
