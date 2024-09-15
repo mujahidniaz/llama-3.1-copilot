@@ -66,6 +66,8 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
 
   const [selectedUploadFiles, setSelectedUploadFiles] = useState([]);
 
+  const [successMessage, setSuccessMessage] = useState("");
+
   const handleUpload = async () => {
     if (selectedUploadFiles.length === 0) {
       setError("Please select at least one file to upload.");
@@ -73,6 +75,8 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
     }
 
     setIsLoading(true);
+    setError(null);
+    setSuccessMessage("");
     const formData = new FormData();
     for (let i = 0; i < selectedUploadFiles.length; i++) {
       formData.append("files", selectedUploadFiles[i]);
@@ -89,6 +93,10 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
       console.log("Files uploaded successfully:", response.data);
       fetchFiles();
       setSelectedUploadFiles([]);
+      setSuccessMessage("Files uploaded successfully!");
+      // Reset file input
+      const fileInput = document.getElementById('file-input');
+      if (fileInput) fileInput.value = '';
     } catch (error) {
       setError("Failed to upload files. Please try again.");
     } finally {
@@ -135,6 +143,7 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
           </div>
           <div className="modal-body">
             {error && <Alert variant="destructive">{error}</Alert>}
+            {successMessage && <Alert variant="success">{successMessage}</Alert>}
 
             <div className="d-flex justify-content-end mb-3">
               <button
