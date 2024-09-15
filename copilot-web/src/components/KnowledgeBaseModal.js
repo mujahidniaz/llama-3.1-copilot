@@ -143,23 +143,18 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
             </button>
           </div>
           <div className="modal-body">
-            <div className="message-container mb-3" style={{ minHeight: '60px' }}>
-              {error && <Alert variant="destructive">{error}</Alert>}
-              {successMessage && (
-                <Alert variant="success">{successMessage}</Alert>
-              )}
-            </div>
-
-            <div className="d-flex justify-content-between align-items-start mb-3">
+            <div className="row">
               <div
-                className={`upload-area ${dragOver ? "drag-over" : ""}`}
+                className={`col-md-6 upload-area ${
+                  dragOver ? "drag-over" : ""
+                }`}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
-                style={{ width: '70%', padding: '10px', overflow: 'hidden' }}
+                style={{ width: "40%", padding: "10px", overflow: "hidden" }}
               >
                 <FileText size={24} className="mb-2" />
-                <p className="mb-0" style={{ fontSize: '0.9rem' }}>
+                <p className="mb-0" style={{ fontSize: "0.9rem" }}>
                   Drag and drop files here or
                 </p>
                 <input
@@ -168,10 +163,10 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
                   onChange={handleFileInputChange}
                   className="file-input"
                   id="file-input"
-                  style={{ width: '100%', marginTop: '5px' }}
+                  style={{ width: "95%", marginTop: "5px" }}
                 />
               </div>
-              <div className="d-flex flex-column">
+              <div className="col-md-2">
                 <button
                   onClick={handleUpload}
                   className="btn btn-sm btn-success btn-icon mb-2"
@@ -193,16 +188,27 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
 
             {selectedUploadFiles.length > 0 && (
               <div className="mb-3">
-                <p className="mb-1">{selectedUploadFiles.length} file(s) selected for upload</p>
+                <p className="mb-1">
+                  {selectedUploadFiles.length} file(s) selected for upload
+                </p>
                 <ul className="list-unstyled">
                   {selectedUploadFiles.map((file, index) => (
-                    <li key={index} className="text-muted" style={{ fontSize: '0.9rem' }}>{file.name}</li>
+                    <li
+                      key={index}
+                      className="text-muted"
+                      style={{ fontSize: "0.9rem" }}
+                    >
+                      {file.name}
+                    </li>
                   ))}
                 </ul>
               </div>
             )}
 
-            <div className="file-list" style={{ height: "calc(100vh - 300px)", overflowY: "auto" }}>
+            <div
+              className="file-list"
+              style={{ height: "calc(100vh - 300px)", overflowY: "auto" }}
+            >
               <table className="table table-bordered table-striped w-100">
                 <thead
                   style={{
