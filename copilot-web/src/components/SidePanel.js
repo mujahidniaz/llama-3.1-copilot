@@ -9,6 +9,8 @@ const SidePanel = ({
   setRelevantDocuments,
   chatHistoryMessages,
   setChatHistoryMessages,
+  openKnowledgeBaseModal,
+  closeKnowledgeBaseModal,
 }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [notification, setNotification] = useState(null);
@@ -87,7 +89,7 @@ const SidePanel = ({
 
           <button
             className="knowledge-base-button"
-            onClick={() => console.log("Knowledge Base Button Clicked")}
+            onClick={() => openKnowledgeBaseModal()}
           >
             Knowledge Base
           </button>

@@ -21,6 +21,14 @@ const ChatInterface = () => {
   const messagesEndRef = useRef(null);
   const socketRef = useRef(null);
 
+  const openKnowledgeBaseModal = () => {
+    setIsKnowledgeBaseModalOpen(true);
+  };
+
+  const closeKnowledgeBaseModal = () => {
+    setIsKnowledgeBaseModalOpen(false);
+  };
+
   useEffect(() => {
     socketRef.current = io("http://localhost:8000");
 
@@ -108,6 +116,8 @@ const ChatInterface = () => {
           setRelevantDocuments={setRelevantDocuments}
           chatHistoryMessages={chatHistoryMessages}
           setChatHistoryMessages={setChatHistoryMessages}
+          openKnowledgeBaseModal={openKnowledgeBaseModal}
+          closeKnowledgeBaseModal={closeKnowledgeBaseModal}
         />
       </div>
       <div className="main-chat">
@@ -115,7 +125,7 @@ const ChatInterface = () => {
           <h2 style={{ fontFamily: "Exo" }}>TRY THE ART OF DEDUCTION</h2>
           <KnowledgeBaseModal
             isOpen={isKnowledgeBaseModalOpen}
-            onClose={() => setIsKnowledgeBaseModalOpen(false)}
+            onClose={closeKnowledgeBaseModal}
           />
         </div>
         {!isConnected ? (
