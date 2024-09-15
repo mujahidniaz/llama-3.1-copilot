@@ -51,7 +51,7 @@ The system consists of four main components:
      ```
    - For GPU (Nvidia):
      ```
-     ./run_CPU.sh
+     ./run_GPU.sh
      ```
    - For Windows:
      ```
