@@ -139,7 +139,7 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
             <div className="d-flex justify-content-end mb-3">
               <button
                 onClick={handleUpload}
-                className="btn btn-success btn-icon mr-2"
+                className="btn btn-success btn-icon mr-3"
                 disabled={selectedUploadFiles.length === 0}
               >
                 <Upload size={18} />
