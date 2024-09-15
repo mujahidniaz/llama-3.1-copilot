@@ -123,7 +123,7 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
       <div className="modal-dialog modal-lg" role="document">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">Knowledge Base</h5>
+            <h3 className="modal-title">Knowledge Base</h3>
             <button
               type="button"
               className="close"
