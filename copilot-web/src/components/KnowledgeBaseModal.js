@@ -25,7 +25,7 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
     setIsLoading(true);
     try {
       const response = await axios.get("http://localhost:8000/list_files");
-      setFiles(response.data.files);
+      setFiles(response.data);
     } catch (error) {
       setError("Failed to fetch files. Please try again.");
     } finally {
@@ -123,7 +123,7 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
       <div className="modal-dialog modal-lg" role="document">
         <div className="modal-content">
           <div className="modal-header">
-            <h5 className="modal-title">Knowledge Base</h5>
+            <h3 className="modal-title">Knowledge Base</h3>
             <button
               type="button"
               className="close"
@@ -162,7 +162,9 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
               onDrop={handleDrop}
             >
               <FileText size={48} className="mb-3" />
-              <p>Drag and drop files here or select files using the input below</p>
+              <p>
+                Drag and drop files here or select files using the input below
+              </p>
               <div className="d-flex justify-content-center align-items-center mt-3">
                 <input
                   type="file"
