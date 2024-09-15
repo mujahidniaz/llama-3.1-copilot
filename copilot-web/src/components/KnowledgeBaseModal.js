@@ -187,9 +187,9 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
               </div>
             )}
 
-            <div className="file-list mt-4">
+            <div className="file-list mt-4" style={{ maxHeight: '300px', overflowY: 'auto' }}>
               <table className="table table-bordered table-striped w-100">
-                <thead>
+                <thead style={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
                   <tr>
                     <th scope="col"></th>
                     <th scope="col">File Name</th>
