@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { X, Trash2, Upload, Loader, FileText } from "lucide-react";
-import "../../styles/KnowledgeBaseModal.css";
+import "../styles/KnowledgeBaseModal.css";
 
 const Alert = ({ children, variant = "default" }) => (
   <div
@@ -164,7 +164,10 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
               <FileText size={48} className="mb-3" />
               <p>Drag and drop files here or use the button below</p>
               <div className="d-flex justify-content-center align-items-center mt-3">
-                <label htmlFor="file-input" className="btn btn-primary btn-icon">
+                <label
+                  htmlFor="file-input"
+                  className="btn btn-primary btn-icon"
+                >
                   <Upload size={18} />
                   Select Files
                 </label>
