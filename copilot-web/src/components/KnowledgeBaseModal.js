@@ -133,14 +133,32 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
         <div className="modal-content">
           <div className="modal-header">
             <h3 className="modal-title">Knowledge Base</h3>
-            <button
-              type="button"
-              className="close"
-              aria-label="Close"
-              onClick={onClose}
-            >
-              <span aria-hidden="true">&times;</span>
-            </button>
+            <div className="d-flex">
+              <button
+                onClick={handleUpload}
+                className="btn btn-success btn-icon me-2"
+                disabled={selectedUploadFiles.length === 0}
+              >
+                <Upload size={18} className="me-2" />
+                Upload
+              </button>
+              <button
+                onClick={handleDelete}
+                className="btn btn-danger btn-icon me-2"
+                disabled={selectedFiles.length === 0}
+              >
+                <Trash2 size={18} className="me-2" />
+                Delete Selected
+              </button>
+              <button
+                type="button"
+                className="close"
+                aria-label="Close"
+                onClick={onClose}
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
           </div>
           <div className="modal-body">
             <div className="row">
@@ -166,23 +184,8 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
                   />
                 </div>
               </div>
-              <div className="col-md-6 d-flex flex-column justify-content-center">
-                <button
-                  onClick={handleUpload}
-                  className="btn btn-success btn-icon mb-3"
-                  disabled={selectedUploadFiles.length === 0}
-                >
-                  <Upload size={18} className="me-2" />
-                  Upload
-                </button>
-                <button
-                  onClick={handleDelete}
-                  className="btn btn-danger btn-icon"
-                  disabled={selectedFiles.length === 0}
-                >
-                  <Trash2 size={18} className="me-2" />
-                  Delete Selected
-                </button>
+              <div className="col-md-6">
+                {/* This column is now empty */}
               </div>
             </div>
 
@@ -242,16 +245,7 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
               </table>
             </div>
           </div>
-          <div className="modal-footer">
-            <button
-              onClick={handleDelete}
-              disabled={selectedFiles.length === 0 || isLoading}
-              className="btn btn-danger btn-icon"
-            >
-              <Trash2 size={18} />
-              Delete Selected
-            </button>
-          </div>
+          {/* Modal footer removed */}
 
           {isLoading && (
             <div className="loading-overlay">
