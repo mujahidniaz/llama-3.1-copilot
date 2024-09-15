@@ -150,13 +150,13 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
               )}
             </div>
 
-            <div className="d-flex justify-content-between align-items-center mb-3">
+            <div className="d-flex justify-content-between align-items-start mb-3">
               <div
                 className={`upload-area ${dragOver ? "drag-over" : ""}`}
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
-                style={{ width: '50%', padding: '10px' }}
+                style={{ width: '70%', padding: '10px', overflow: 'hidden' }}
               >
                 <FileText size={24} className="mb-2" />
                 <p className="mb-0" style={{ fontSize: '0.9rem' }}>
@@ -171,10 +171,10 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
                   style={{ width: '100%', marginTop: '5px' }}
                 />
               </div>
-              <div className="d-flex">
+              <div className="d-flex flex-column">
                 <button
                   onClick={handleUpload}
-                  className="btn btn-sm btn-success btn-icon mr-2"
+                  className="btn btn-sm btn-success btn-icon mb-2"
                   disabled={selectedUploadFiles.length === 0}
                 >
                   <Upload size={12} />
