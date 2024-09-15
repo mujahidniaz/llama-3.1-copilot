@@ -5,8 +5,12 @@ import InputArea from "./InputArea";
 import Message from "./Message";
 import SidePanel from "./SidePanel";
 import TypingAnimation from "./TypingAnimation";
+import KnowledgeBaseModal from "./KnowledgeBaseModal";
 
 const ChatInterface = () => {
+  const [isKnowledgeBaseModalOpen, setIsKnowledgeBaseModalOpen] =
+    useState(false);
+
   const [messages, setMessages] = useState([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationStopped, setGenerationStopped] = useState(false);
@@ -109,6 +113,16 @@ const ChatInterface = () => {
       <div className="main-chat">
         <div className="chat-header">
           <h2 style={{ fontFamily: "Exo" }}>TRY THE ART OF DEDUCTION</h2>
+          <button
+            className="knowledge-base-button"
+            onClick={() => setIsKnowledgeBaseModalOpen(true)}
+          >
+            Knowledge Base
+          </button>
+          <KnowledgeBaseModal
+            isOpen={isKnowledgeBaseModalOpen}
+            onClose={() => setIsKnowledgeBaseModalOpen(false)}
+          />
         </div>
         {!isConnected ? (
           <div className="connection-message">
