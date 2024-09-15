@@ -144,44 +144,44 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
           </div>
           <div className="modal-body">
             <div className="row">
-              <div
-                className={`col-md-6 upload-area ${
-                  dragOver ? "drag-over" : ""
-                }`}
-                onDragOver={handleDragOver}
-                onDragLeave={handleDragLeave}
-                onDrop={handleDrop}
-                style={{ width: "40%", padding: "10px", overflow: "hidden" }}
-              >
-                <FileText size={24} className="mb-2" />
-                <p className="mb-0" style={{ fontSize: "0.9rem" }}>
-                  Drag and drop files here or
-                </p>
-                <input
-                  type="file"
-                  multiple
-                  onChange={handleFileInputChange}
-                  className="file-input"
-                  id="file-input"
-                  style={{ width: "95%", marginTop: "5px" }}
-                />
+              <div className="col-md-6">
+                <div
+                  className={`upload-area ${dragOver ? "drag-over" : ""}`}
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={handleDrop}
+                  style={{ height: "100%", padding: "20px" }}
+                >
+                  <FileText size={24} className="mb-2" />
+                  <p className="mb-2" style={{ fontSize: "0.9rem" }}>
+                    Drag and drop files here or
+                  </p>
+                  <input
+                    type="file"
+                    multiple
+                    onChange={handleFileInputChange}
+                    className="file-input"
+                    id="file-input"
+                    style={{ width: "100%" }}
+                  />
+                </div>
               </div>
-              <div className="col-md-2">
+              <div className="col-md-6 d-flex flex-column justify-content-center">
                 <button
                   onClick={handleUpload}
-                  className="btn btn-sm btn-success btn-icon mb-2"
+                  className="btn btn-success btn-icon mb-3"
                   disabled={selectedUploadFiles.length === 0}
                 >
-                  <Upload size={12} />
+                  <Upload size={18} className="me-2" />
                   Upload
                 </button>
                 <button
                   onClick={handleDelete}
-                  className="btn btn-sm btn-danger btn-icon"
+                  className="btn btn-danger btn-icon"
                   disabled={selectedFiles.length === 0}
                 >
-                  <Trash2 size={12} />
-                  Delete
+                  <Trash2 size={18} className="me-2" />
+                  Delete Selected
                 </button>
               </div>
             </div>
