@@ -199,3 +199,10 @@
   align-items: center;
   z-index: 1000;
 }
+.modal-body .btn-icon {
+  margin-left: 10px;
+}
+
+.modal-body .btn-icon:first-child {
+  margin-left: 0;
+}

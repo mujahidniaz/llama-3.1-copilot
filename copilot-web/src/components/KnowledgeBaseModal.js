@@ -136,6 +136,25 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
           <div className="modal-body">
             {error && <Alert variant="destructive">{error}</Alert>}
 
+            <div className="d-flex justify-content-end mb-3">
+              <button
+                onClick={handleUpload}
+                className="btn btn-success btn-icon mr-2"
+                disabled={selectedUploadFiles.length === 0}
+              >
+                <Upload size={18} />
+                Upload Files
+              </button>
+              <button
+                onClick={handleDelete}
+                className="btn btn-danger btn-icon"
+                disabled={selectedFiles.length === 0}
+              >
+                <Trash2 size={18} />
+                Delete Files
+              </button>
+            </div>
+
             <div
               className={`upload-area ${dragOver ? "drag-over" : ""}`}
               onDragOver={handleDragOver}
@@ -143,8 +162,8 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
               onDrop={handleDrop}
             >
               <FileText size={48} className="mb-3" />
-              <p>Drag and drop files here or use the buttons below</p>
-              <div className="d-flex justify-content-between align-items-center mt-3">
+              <p>Drag and drop files here or use the button below</p>
+              <div className="d-flex justify-content-center align-items-center mt-3">
                 <label htmlFor="file-input" className="btn btn-primary btn-icon">
                   <Upload size={18} />
                   Select Files
@@ -153,23 +172,15 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
                   type="file"
                   multiple
                   onChange={handleFileInputChange}
-                  className="form-control-file"
+                  className="d-none"
                   id="file-input"
-                  style={{ maxWidth: '50%' }}
                 />
               </div>
             </div>
 
             {selectedUploadFiles.length > 0 && (
               <div className="mt-3">
-                <p>{selectedUploadFiles.length} file(s) selected</p>
-                <button
-                  onClick={handleUpload}
-                  className="btn btn-success btn-icon"
-                >
-                  <Upload size={18} />
-                  Upload Files
-                </button>
+                <p>{selectedUploadFiles.length} file(s) selected for upload</p>
               </div>
             )}
 
