@@ -136,7 +136,7 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
           <div className="modal-body">
             {error && <Alert variant="destructive">{error}</Alert>}
 
-            <div className="d-flex justify-content-end mb-3">
+            <div className="d-flex justify-content-end mb-4">
               <button
                 onClick={handleUpload}
                 className="btn btn-success btn-icon mr-3"
@@ -160,6 +160,7 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
+              style={{ minHeight: '120px', padding: '20px' }}
             >
               <FileText size={48} className="mb-3" />
               <p>
