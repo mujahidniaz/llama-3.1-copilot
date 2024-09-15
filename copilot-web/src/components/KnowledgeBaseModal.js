@@ -156,7 +156,7 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
             </div>
 
             <div
-              className={`upload-area ${dragOver ? "drag-over" : ""}`}
+              className={`upload-area mt-4 ${dragOver ? "drag-over" : ""}`}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
