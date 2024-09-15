@@ -136,22 +136,22 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
           <div className="modal-body">
             {error && <Alert variant="destructive">{error}</Alert>}
 
-            <div className="d-flex justify-content-end mb-4">
+            <div className="d-flex justify-content-end mb-3">
               <button
                 onClick={handleUpload}
-                className="btn btn-xs btn-success btn-icon mr-2"
+                className="btn btn-success btn-icon mr-3"
                 disabled={selectedUploadFiles.length === 0}
               >
-                <Upload size={12} />
-                Upload
+                <Upload size={18} />
+                Upload Files
               </button>
               <button
                 onClick={handleDelete}
-                className="btn btn-xs btn-danger btn-icon"
+                className="btn btn-danger btn-icon"
                 disabled={selectedFiles.length === 0}
               >
-                <Trash2 size={12} />
-                Delete
+                <Trash2 size={18} />
+                Delete Files
               </button>
             </div>
 
@@ -160,7 +160,6 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
-              style={{ minHeight: '120px', padding: '20px' }}
             >
               <FileText size={48} className="mb-3" />
               <p>
@@ -188,9 +187,9 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
               </div>
             )}
 
-            <div className="file-list mt-4" style={{ maxHeight: '300px', overflowY: 'auto' }}>
+            <div className="file-list mt-4">
               <table className="table table-bordered table-striped w-100">
-                <thead style={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
+                <thead>
                   <tr>
                     <th scope="col"></th>
                     <th scope="col">File Name</th>
@@ -219,9 +218,9 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
             <button
               onClick={handleDelete}
               disabled={selectedFiles.length === 0 || isLoading}
-              className="btn btn-sm btn-danger btn-icon"
+              className="btn btn-danger btn-icon"
             >
-              <Trash2 size={16} />
+              <Trash2 size={18} />
               Delete Selected
             </button>
           </div>
