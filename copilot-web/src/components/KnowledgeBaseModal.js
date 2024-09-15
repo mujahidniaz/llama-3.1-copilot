@@ -133,7 +133,7 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
         <div className="modal-content">
           <div className="modal-header">
             <h3 className="modal-title ms-4">Knowledge Base</h3>
-            <div className="d-flex align-items-center">
+            <div className="d-flex align-items-center" style={{ width: "25%" }}>
               <button
                 onClick={handleUpload}
                 className="btn btn-success btn-sm btn-icon me-2"
@@ -151,6 +151,7 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
                 Delete
               </button>
               <button
+                style={{ marginLeft: "2%" }}
                 type="button"
                 className="btn btn-outline-secondary btn-sm ms-4"
                 aria-label="Close"
@@ -184,9 +185,7 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
                   />
                 </div>
               </div>
-              <div className="col-md-6">
-                {/* This column is now empty */}
-              </div>
+              <div className="col-md-6">{/* This column is now empty */}</div>
             </div>
 
             {selectedUploadFiles.length > 0 && (
@@ -214,6 +213,7 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
             >
               <table className="table table-bordered table-striped w-100">
                 <thead
+                  className="stickytop-0 bg-white shadow-sm z-10"
                   style={{
                     position: "sticky",
                     top: 0,
