@@ -133,30 +133,30 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
         <div className="modal-content">
           <div className="modal-header">
             <h3 className="modal-title">Knowledge Base</h3>
-            <div className="d-flex">
+            <div className="d-flex align-items-center">
               <button
                 onClick={handleUpload}
-                className="btn btn-success btn-icon me-2"
+                className="btn btn-success btn-sm btn-icon me-2"
                 disabled={selectedUploadFiles.length === 0}
               >
-                <Upload size={18} className="me-2" />
+                <Upload size={14} className="me-1" />
                 Upload
               </button>
               <button
                 onClick={handleDelete}
-                className="btn btn-danger btn-icon me-2"
+                className="btn btn-danger btn-sm btn-icon me-2"
                 disabled={selectedFiles.length === 0}
               >
-                <Trash2 size={18} className="me-2" />
-                Delete Selected
+                <Trash2 size={14} className="me-1" />
+                Delete
               </button>
               <button
                 type="button"
-                className="close"
+                className="btn btn-outline-secondary btn-sm"
                 aria-label="Close"
                 onClick={onClose}
               >
-                <span aria-hidden="true">&times;</span>
+                <X size={14} />
               </button>
             </div>
           </div>
