@@ -1,5 +1,7 @@
 // src/context/KnowledgeBaseContext.js
 import { createContext, useState } from 'react';
+import React from 'react';
+import './Modal.css';
 
 const KnowledgeBaseContext = createContext();
 

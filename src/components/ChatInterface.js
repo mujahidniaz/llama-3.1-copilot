@@ -15,5 +15,17 @@ const ChatInterface = () => {
     setOpenKnowledgeBaseModal,
   } = useContext(KnowledgeBaseContext);
 
-  // Rest of the code...
+  return (
+    <div>
+      <button onClick={() => setOpenKnowledgeBaseModal(true)}>Open Modal</button>
+      {openKnowledgeBaseModal && (
+        <div className="modal">
+          <h2>Knowledge Base</h2>
+          <button className="delete-button">Delete</button>
+          <button className="add-new-file-button">Add New File</button>
+          <button onClick={() => setOpenKnowledgeBaseModal(false)}>Close</button>
+        </div>
+      )}
+    </div>
+  );
 };
