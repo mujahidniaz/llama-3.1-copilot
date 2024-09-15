@@ -80,7 +80,7 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/upload_files",
+        "http://localhost:8000/upload",
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },
@@ -187,9 +187,19 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
               </div>
             )}
 
-            <div className="file-list mt-4" style={{ maxHeight: '300px', overflowY: 'auto' }}>
+            <div
+              className="file-list mt-4"
+              style={{ maxHeight: "300px", overflowY: "auto" }}
+            >
               <table className="table table-bordered table-striped w-100">
-                <thead style={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
+                <thead
+                  style={{
+                    position: "sticky",
+                    top: 0,
+                    backgroundColor: "white",
+                    zIndex: 1,
+                  }}
+                >
                   <tr>
                     <th scope="col"></th>
                     <th scope="col">File Name</th>
