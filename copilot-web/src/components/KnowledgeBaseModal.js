@@ -79,9 +79,13 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
     }
 
     try {
-      const response = await axios.post("http://localhost:8000/upload_files", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const response = await axios.post(
+        "http://localhost:8000/upload_files",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        }
+      );
       console.log("Files uploaded successfully:", response.data);
       fetchFiles();
       setSelectedUploadFiles([]);
@@ -148,7 +152,7 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
                 id="file-input"
               />
               <label htmlFor="file-input" className="btn btn-primary btn-icon">
-                <Upload size={18} />
+                {/* <Upload size={18} /> */}
                 Select Files
               </label>
             </div>
@@ -156,7 +160,10 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
             {selectedUploadFiles.length > 0 && (
               <div className="mt-3">
                 <p>{selectedUploadFiles.length} file(s) selected</p>
-                <button onClick={handleUpload} className="btn btn-success btn-icon">
+                <button
+                  onClick={handleUpload}
+                  className="btn btn-success btn-icon"
+                >
                   <Upload size={18} />
                   Upload Files
                 </button>
