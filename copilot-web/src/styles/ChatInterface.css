@@ -32,7 +32,7 @@
 .chat-header {
   background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
   color: white;
-  padding: 20px;
+  padding: 0px 20px 10px 20px;
   text-align: center;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
@@ -270,4 +270,100 @@
 
 .side-panel::-webkit-scrollbar-thumb:hover {
   background-color: rgba(255, 255, 255, 0.5);
+}
+
+
+
+/* Full-screen modal styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: white;
+  border-radius: 8px;
+  padding: 2rem;
+  width: 95%;
+  max-width: 1200px;
+  height: 95vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.modal-body {
+  flex-grow: 1;
+  overflow-y: auto;
+}
+
+.modal-footer {
+  margin-top: 1rem;
+}
+
+/* Table styles */
+.file-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.file-table th {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 10;
+}
+
+.file-table th,
+.file-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .modal-content {
+    padding: 1rem;
+  }
+
+  .file-table th,
+  .file-table td {
+    padding: 0.5rem;
+  }
+}
+
+/* Knowledge Base Button */
+.knowledge-base-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #3f3e41;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.knowledge-base-button:hover {
+  background-color:  #807d85;;
 }

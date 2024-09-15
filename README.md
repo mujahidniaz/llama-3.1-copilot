@@ -45,9 +45,13 @@ The system consists of four main components:
    ```
 
 3. Build and start the containers:
-   - For Linux:
+   - For CPU:
      ```
-     ./run_linux.sh
+     ./run_CPU.sh
+     ```
+   - For GPU (Nvidia):
+     ```
+     ./run_CPU.sh
      ```
    - For Windows:
      ```

@@ -59,7 +59,7 @@ def get_env_as_float(var_name, default=0.5):
 app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
-MODEL = os.environ.get('OLLAMA_MODEL', "llama3.1")
+MODEL = os.environ.get('OLLAMA_MODEL', "llama3.1:8b-instruct-q2_K")
 CHROMA_HOST = os.environ.get('CHROMA_HOST', "chromadb")
 CHROMA_PORT = os.environ.get('CHROMA_PORT', "8000")
 CHROMA_COLLECTION = os.environ.get('CHROMA_COLLECTION', "documents_collection")
@@ -83,10 +83,55 @@ chroma_client = chromadb.HttpClient(
     tenant=DEFAULT_TENANT,
     database=DEFAULT_DATABASE,
 )
+UPLOAD_FOLDER = '/data'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
 
 # Create or get ChromaDB collection
+def split_document(doc_text, chunk_size=CHUNK_SIZE):
+    """Split a document into smaller chunks based on word count."""
+    words = doc_text.split()
+    return [' '.join(words[i:i + chunk_size]) for i in range(0, len(words), chunk_size)]
 
 
+def add_documents():
+    try:
+        chroma_client.delete_collection(CHROMA_COLLECTION)
+    except:
+        print("collection doesnt exist!!")
+    collection = chroma_client.create_collection(
+        name=CHROMA_COLLECTION,
+        embedding_function=embedding_functions.DefaultEmbeddingFunction(),
+        # Chroma will use this to generate embeddings
+        get_or_create=True
+    )
+
+    if not app.config['UPLOAD_FOLDER'] or not os.path.isdir(app.config['UPLOAD_FOLDER']):
+        return
+
+    # Use LlamaIndex to read files (or any other method to read documents)
+    documents = SimpleDirectoryReader(app.config['UPLOAD_FOLDER'], filename_as_id=True).load_data()
+
+    all_documents = []
+    all_ids = []
+
+    # Split and add each document
+    for doc in documents:
+        chunks = split_document(doc.text)
+        ids = [f"{os.path.basename(doc.doc_id)}_{i}" for i in range(len(chunks))]
+        all_documents.extend(chunks)
+        all_ids.extend(ids)
+
+    # Add documents to ChromaDB
+    collection.add(
+        documents=all_documents,  # Document chunks
+        ids=all_ids  # Unique IDs for each chunk
+    )
+
+    return
+
+
+add_documents()
 # A dictionary to keep track of active streams
 active_streams = {}
 
@@ -175,55 +220,79 @@ def stop_generation():
     active_streams[sid] = 'stopped'  # Mark this stream as stopped
 
 
-def split_document(doc_text, chunk_size=CHUNK_SIZE):
-    """Split a document into smaller chunks based on word count."""
-    words = doc_text.split()
-    return [' '.join(words[i:i + chunk_size]) for i in range(0, len(words), chunk_size)]
-
-
-
 @app.route('/health')
 def health_check():
     return jsonify({"status": "healthy"}), 200
 
 
-@app.route('/add_documents', methods=['POST'])
-def add_documents():
-    try:
-        chroma_client.delete_collection(CHROMA_COLLECTION)
-    except:
-        print("collection doesnt exist!!")
-    collection = chroma_client.create_collection(
-        name=CHROMA_COLLECTION,
-        embedding_function=embedding_functions.DefaultEmbeddingFunction(),
-        # Chroma will use this to generate embeddings
-        get_or_create=True
-    )
-    directory_path = "/data"
+@app.route('/upload', methods=['POST'])
+def upload_files():
+    if 'files' not in request.files:
+        return jsonify({'error': 'No file part in the request'}), 400
 
-    if not directory_path or not os.path.isdir(directory_path):
-        return jsonify({"error": "Invalid directory path"}), 400
+    files = request.files.getlist('files')
 
-    # Use LlamaIndex to read files (or any other method to read documents)
-    documents = SimpleDirectoryReader(directory_path, filename_as_id=True).load_data()
+    if not files or files[0].filename == '':
+        return jsonify({'error': 'No files selected for uploading'}), 400
 
-    all_documents = []
-    all_ids = []
+    uploaded_files = []
+    for file in files:
+        if file:
+            filename = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+            file.save(filename)
+            uploaded_files.append(file.filename)
 
-    # Split and add each document
-    for doc in documents:
-        chunks = split_document(doc.text)
-        ids = [f"{os.path.basename(doc.doc_id)}_{i}" for i in range(len(chunks))]
-        all_documents.extend(chunks)
-        all_ids.extend(ids)
+    add_documents()
+    return jsonify({
+        'message': 'Files successfully uploaded',
+        'uploaded_files': uploaded_files
+    }), 200
 
-    # Add documents to ChromaDB
-    collection.add(
-        documents=all_documents,  # Document chunks
-        ids=all_ids  # Unique IDs for each chunk
-    )
 
-    return jsonify({"status": "Documents added successfully"}), 200
+@app.route('/list_files', methods=['GET'])
+def list_files():
+    files = []
+    for filename in os.listdir(UPLOAD_FOLDER):
+        if "do_not_delete.file" in filename:
+            continue
+        file_path = os.path.join(UPLOAD_FOLDER, filename)
+        if os.path.isfile(file_path):
+            stats = os.stat(file_path)
+            files.append({
+                'name': filename,
+                'size': stats.st_size
+            })
+
+    return jsonify(files), 200
+
+
+@app.route('/delete_files', methods=['POST'])
+def delete_files():
+    data = request.json
+    if not data:
+        return jsonify({'error': 'No files specified for deletion'}), 400
+
+    files_to_delete = data['files']
+
+    if not isinstance(files_to_delete, list):
+        return jsonify({'error': 'Files must be provided as a list'}), 400
+
+    results = []
+    for filename in files_to_delete:
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
+        if not os.path.exists(file_path):
+            results.append({'filename': filename, 'status': 'error', 'message': 'File not found'})
+        elif not os.path.isfile(file_path):
+            results.append({'filename': filename, 'status': 'error', 'message': 'Not a file'})
+        else:
+            try:
+                os.remove(file_path)
+                results.append({'filename': filename, 'status': 'success', 'message': 'File deleted'})
+            except Exception as e:
+                results.append({'filename': filename, 'status': 'error', 'message': str(e)})
+    add_documents()
+    return jsonify({'results': results}), 200
 
 
 if __name__ == '__main__':
