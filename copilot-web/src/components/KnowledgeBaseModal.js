@@ -30,6 +30,7 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
       setError("Failed to fetch files. Please try again.");
     } finally {
       setIsLoading(false);
+      setSuccessMessage("");
     }
   }, []);
 
@@ -95,8 +96,8 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
       setSelectedUploadFiles([]);
       setSuccessMessage("Files uploaded successfully!");
       // Reset file input
-      const fileInput = document.getElementById('file-input');
-      if (fileInput) fileInput.value = '';
+      const fileInput = document.getElementById("file-input");
+      if (fileInput) fileInput.value = "";
     } catch (error) {
       setError("Failed to upload files. Please try again.");
     } finally {
@@ -143,7 +144,9 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
           </div>
           <div className="modal-body">
             {error && <Alert variant="destructive">{error}</Alert>}
-            {successMessage && <Alert variant="success">{successMessage}</Alert>}
+            {successMessage && (
+              <Alert variant="success">{successMessage}</Alert>
+            )}
 
             <div className="d-flex justify-content-end mb-3">
               <button
