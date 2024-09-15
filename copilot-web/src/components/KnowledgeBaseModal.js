@@ -22,6 +22,8 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
   useEffect(() => {
     if (isOpen) {
       fetchFiles();
+    } else {
+      setSelectedFiles([]);
     }
   }, [isOpen]);
 
@@ -43,6 +45,29 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
         ? prev.filter((f) => f !== filename)
         : [...prev, filename]
     );
+  };
+
+  const handleUpload = async () => {
+    if (selectedFiles.length === 0) {
+      setError("Please select at least one file to upload.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      // Replace this with your actual upload API call
+      const response = await axios.post("http://localhost:8000/upload_files", {
+        files: selectedFiles,
+      });
+      console.log("Files uploaded successfully:", response.data);
+      // Optionally, you can update the UI or show a success message here
+      setSelectedFiles([]);
+      fetchFiles(); // Refresh the file list
+    } catch (error) {
+      setError("Failed to upload files. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleDelete = async () => {
