@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
-import { X, Trash2, Upload, Loader } from "lucide-react";
+import { X, Trash2, Upload, Loader, FileText } from "lucide-react";
 import "../styles/KnowledgeBaseModal.css";
+
 const Alert = ({ children, variant = "default" }) => (
   <div
     className={`alert ${
       variant === "destructive" ? "alert-danger" : "alert-primary"
-    }`}
+    } mb-3`}
     role="alert"
   >
     {children}
@@ -18,16 +19,9 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [dragOver, setDragOver] = useState(false);
 
-  useEffect(() => {
-    if (isOpen) {
-      fetchFiles();
-    } else {
-      setSelectedFiles([]);
-    }
-  }, [isOpen]);
-
-  const fetchFiles = async () => {
+  const fetchFiles = useCallback(async () => {
     setIsLoading(true);
     try {
       const response = await axios.get("http://localhost:8000/list_files");
@@ -37,7 +31,15 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchFiles();
+    } else {
+      setSelectedFiles([]);
+    }
+  }, [isOpen, fetchFiles]);
 
   const handleFileSelect = (filename) => {
     setSelectedFiles((prev) =>
@@ -62,8 +64,7 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleUpload = async (event) => {
-    const files = event.target.files;
+  const handleUpload = async (files) => {
     if (files.length === 0) {
       setError("Please select at least one file to upload.");
       return;
@@ -80,12 +81,28 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
         headers: { "Content-Type": "multipart/form-data" },
       });
       console.log("Files uploaded successfully:", response.data);
-      fetchFiles(); // Refresh the file list
+      fetchFiles();
     } catch (error) {
       setError("Failed to upload files. Please try again.");
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+    setDragOver(true);
+  };
+
+  const handleDragLeave = () => {
+    setDragOver(false);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault();
+    setDragOver(false);
+    const files = e.dataTransfer.files;
+    handleUpload(files);
   };
 
   if (!isOpen) return null;
@@ -108,7 +125,28 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
           <div className="modal-body">
             {error && <Alert variant="destructive">{error}</Alert>}
 
-            <div className="table-responsive">
+            <div
+              className={`upload-area ${dragOver ? "drag-over" : ""}`}
+              onDragOver={handleDragOver}
+              onDragLeave={handleDragLeave}
+              onDrop={handleDrop}
+            >
+              <FileText size={48} className="mb-3" />
+              <p>Drag and drop files here or click to select files</p>
+              <input
+                type="file"
+                multiple
+                onChange={(e) => handleUpload(e.target.files)}
+                className="d-none"
+                id="file-input"
+              />
+              <label htmlFor="file-input" className="btn btn-primary btn-icon">
+                <Upload size={18} />
+                Select Files
+              </label>
+            </div>
+
+            <div className="file-list">
               <table className="table table-bordered">
                 <thead>
                   <tr>
@@ -139,26 +177,15 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
             <button
               onClick={handleDelete}
               disabled={selectedFiles.length === 0 || isLoading}
-              className="btn btn-danger"
+              className="btn btn-danger btn-icon"
             >
-              <Trash2 size={18} className="mr-2" />
+              <Trash2 size={18} />
               Delete Selected
             </button>
-            <label className="btn btn-primary">
-              <Upload size={18} className="mr-2" />
-              Upload Files
-              <input
-                type="file"
-                multiple
-                onChange={handleUpload}
-                className="d-none"
-                disabled={isLoading}
-              />
-            </label>
           </div>
 
           {isLoading && (
-            <div className="d-flex justify-content-center">
+            <div className="loading-overlay">
               <Loader size={48} className="spinner-border text-primary" />
             </div>
           )}
