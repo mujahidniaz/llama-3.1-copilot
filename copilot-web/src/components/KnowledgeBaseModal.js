@@ -47,29 +47,6 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
     );
   };
 
-  const handleUpload = async () => {
-    if (selectedFiles.length === 0) {
-      setError("Please select at least one file to upload.");
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      // Replace this with your actual upload API call
-      const response = await axios.post("http://localhost:8000/upload_files", {
-        files: selectedFiles,
-      });
-      console.log("Files uploaded successfully:", response.data);
-      // Optionally, you can update the UI or show a success message here
-      setSelectedFiles([]);
-      fetchFiles(); // Refresh the file list
-    } catch (error) {
-      setError("Failed to upload files. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   const handleDelete = async () => {
     setIsLoading(true);
     try {
@@ -87,7 +64,10 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
 
   const handleUpload = async (event) => {
     const files = event.target.files;
-    if (files.length === 0) return;
+    if (files.length === 0) {
+      setError("Please select at least one file to upload.");
+      return;
+    }
 
     setIsLoading(true);
     const formData = new FormData();
@@ -96,10 +76,11 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
     }
 
     try {
-      await axios.post("http://localhost:8000/upload_files", formData, {
+      const response = await axios.post("http://localhost:8000/upload_files", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      fetchFiles();
+      console.log("Files uploaded successfully:", response.data);
+      fetchFiles(); // Refresh the file list
     } catch (error) {
       setError("Failed to upload files. Please try again.");
     } finally {
