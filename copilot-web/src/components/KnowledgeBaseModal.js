@@ -139,19 +139,19 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
             <div className="d-flex justify-content-end mb-4">
               <button
                 onClick={handleUpload}
-                className="btn btn-sm btn-success btn-icon mr-3"
+                className="btn btn-xs btn-success btn-icon mr-2"
                 disabled={selectedUploadFiles.length === 0}
               >
-                <Upload size={16} />
-                Upload Files
+                <Upload size={12} />
+                Upload
               </button>
               <button
                 onClick={handleDelete}
-                className="btn btn-sm btn-danger btn-icon"
+                className="btn btn-xs btn-danger btn-icon"
                 disabled={selectedFiles.length === 0}
               >
-                <Trash2 size={16} />
-                Delete Files
+                <Trash2 size={12} />
+                Delete
               </button>
             </div>
 
@@ -188,9 +188,9 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
               </div>
             )}
 
-            <div className="file-list mt-4">
+            <div className="file-list mt-4" style={{ maxHeight: '300px', overflowY: 'auto' }}>
               <table className="table table-bordered table-striped w-100">
-                <thead>
+                <thead style={{ position: 'sticky', top: 0, backgroundColor: 'white', zIndex: 1 }}>
                   <tr>
                     <th scope="col"></th>
                     <th scope="col">File Name</th>
