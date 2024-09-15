@@ -181,7 +181,6 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
                     onChange={handleFileInputChange}
                     className="file-input"
                     id="file-input"
-                    style={{ width: "100%" }}
                   />
                 </div>
               </div>
