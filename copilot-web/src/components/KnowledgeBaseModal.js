@@ -156,7 +156,7 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
                 onDragOver={handleDragOver}
                 onDragLeave={handleDragLeave}
                 onDrop={handleDrop}
-                style={{ flex: '1', marginRight: '10px', padding: '10px' }}
+                style={{ width: '50%', padding: '10px' }}
               >
                 <FileText size={24} className="mb-2" />
                 <p className="mb-0" style={{ fontSize: '0.9rem' }}>
@@ -171,7 +171,7 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
                   style={{ width: '100%', marginTop: '5px' }}
                 />
               </div>
-              <div>
+              <div className="d-flex">
                 <button
                   onClick={handleUpload}
                   className="btn btn-sm btn-success btn-icon mr-2"
