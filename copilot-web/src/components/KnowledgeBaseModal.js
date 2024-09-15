@@ -123,7 +123,7 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
       <div className="modal-dialog modal-lg" role="document">
         <div className="modal-content">
           <div className="modal-header">
-            <h3 className="modal-title">Knowledge Base</h3>
+            <h5 className="modal-title">Knowledge Base</h5>
             <button
               type="button"
               className="close"
@@ -139,7 +139,7 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
             <div className="d-flex justify-content-end mb-3">
               <button
                 onClick={handleUpload}
-                className="btn btn-primary btn-icon mr-2"
+                className="btn btn-success btn-icon mr-2"
                 disabled={selectedUploadFiles.length === 0}
               >
                 <Upload size={18} />
@@ -147,39 +147,43 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
               </button>
               <button
                 onClick={handleDelete}
-                className="btn btn-outline-danger btn-icon"
+                className="btn btn-danger btn-icon"
                 disabled={selectedFiles.length === 0}
               >
                 <Trash2 size={18} />
-                Delete Selected
+                Delete Files
               </button>
             </div>
 
             <div
-              className={`upload-area mt-4 ${dragOver ? "drag-over" : ""}`}
+              className={`upload-area ${dragOver ? "drag-over" : ""}`}
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
               onDrop={handleDrop}
             >
               <FileText size={48} className="mb-3" />
-              <p>Drag and drop files here or click to select files</p>
-              <input
-                type="file"
-                multiple
-                onChange={handleFileInputChange}
-                className="file-input"
-                id="file-input"
-              />
+              <p>Drag and drop files here or use the button below</p>
+              <div className="d-flex justify-content-center align-items-center mt-3">
+                <label
+                  htmlFor="file-input"
+                  className="btn btn-primary btn-icon"
+                >
+                  <Upload size={18} />
+                  Select Files
+                </label>
+                <input
+                  type="file"
+                  multiple
+                  onChange={handleFileInputChange}
+                  className="d-none"
+                  id="file-input"
+                />
+              </div>
             </div>
 
             {selectedUploadFiles.length > 0 && (
               <div className="mt-3">
-                <p>{selectedUploadFiles.length} file(s) selected</p>
-                <ul>
-                  {Array.from(selectedUploadFiles).map((file, index) => (
-                    <li key={index}>{file.name}</li>
-                  ))}
-                </ul>
+                <p>{selectedUploadFiles.length} file(s) selected for upload</p>
               </div>
             )}
 
