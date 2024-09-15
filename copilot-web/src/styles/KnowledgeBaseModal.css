@@ -206,3 +206,65 @@
 .modal-body .btn-icon:first-child {
   margin-left: 0;
 }
+
+.upload-area {
+  border: 2px dashed #ced4da;
+  border-radius: 8px;
+  padding: 30px;
+  text-align: center;
+  margin-bottom: 1rem;
+  background-color: #f8f9fa;
+  transition: all 0.3s ease;
+}
+
+.upload-area.drag-over {
+  background-color: #e9ecef;
+  border-color: #007bff;
+}
+
+.upload-area p {
+  margin-bottom: 15px;
+}
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: 0.25rem;
+  transition: all 0.15s ease-in-out;
+}
+
+.btn-icon svg {
+  margin-right: 0.5rem;
+}
+
+.file-list {
+  max-height: 300px;
+  overflow-y: auto;
+  margin-top: 1rem;
+}
+
+.table {
+  margin-bottom: 0;
+}
+
+.table th {
+  background-color: #f8f9fa;
+  font-weight: 600;
+}
+
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
