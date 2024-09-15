@@ -162,28 +162,24 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
               onDrop={handleDrop}
             >
               <FileText size={48} className="mb-3" />
-              <p>Drag and drop files here or use the button below</p>
-              <div className="d-flex justify-content-center align-items-center mt-3">
-                <label
-                  htmlFor="file-input"
-                  className="btn btn-primary btn-icon"
-                >
-                  <Upload size={18} />
-                  Select Files
-                </label>
-                <input
-                  type="file"
-                  multiple
-                  onChange={handleFileInputChange}
-                  className="d-none"
-                  id="file-input"
-                />
-              </div>
+              <p>Drag and drop files here or click to select files</p>
+              <input
+                type="file"
+                multiple
+                onChange={handleFileInputChange}
+                className="file-input"
+                id="file-input"
+              />
             </div>
 
             {selectedUploadFiles.length > 0 && (
               <div className="mt-3">
-                <p>{selectedUploadFiles.length} file(s) selected for upload</p>
+                <p>{selectedUploadFiles.length} file(s) selected</p>
+                <ul>
+                  {Array.from(selectedUploadFiles).map((file, index) => (
+                    <li key={index}>{file.name}</li>
+                  ))}
+                </ul>
               </div>
             )}
 
