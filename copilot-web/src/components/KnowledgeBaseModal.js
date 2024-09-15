@@ -143,18 +143,21 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
               onDrop={handleDrop}
             >
               <FileText size={48} className="mb-3" />
-              <p>Drag and drop files here or click to select files</p>
-              <input
-                type="file"
-                multiple
-                onChange={handleFileInputChange}
-                className="d-none"
-                id="file-input"
-              />
-              <label htmlFor="file-input" className="btn btn-primary btn-icon">
-                {/* <Upload size={18} /> */}
-                Select Files
-              </label>
+              <p>Drag and drop files here or use the buttons below</p>
+              <div className="d-flex justify-content-between align-items-center mt-3">
+                <label htmlFor="file-input" className="btn btn-primary btn-icon">
+                  <Upload size={18} />
+                  Select Files
+                </label>
+                <input
+                  type="file"
+                  multiple
+                  onChange={handleFileInputChange}
+                  className="form-control-file"
+                  id="file-input"
+                  style={{ maxWidth: '50%' }}
+                />
+              </div>
             </div>
 
             {selectedUploadFiles.length > 0 && (
