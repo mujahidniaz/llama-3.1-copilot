@@ -143,12 +143,14 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
             </button>
           </div>
           <div className="modal-body">
-            {error && <Alert variant="destructive">{error}</Alert>}
-            {successMessage && (
-              <Alert variant="success">{successMessage}</Alert>
-            )}
+            <div className="message-container mb-3" style={{ minHeight: '60px' }}>
+              {error && <Alert variant="destructive">{error}</Alert>}
+              {successMessage && (
+                <Alert variant="success">{successMessage}</Alert>
+              )}
+            </div>
 
-            <div className="d-flex justify-content-end mb-3">
+            <div className="button-container d-flex justify-content-end mb-3">
               <button
                 onClick={handleUpload}
                 className="btn btn-xs btn-success btn-icon mr-2"

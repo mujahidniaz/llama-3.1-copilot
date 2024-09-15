@@ -316,3 +316,13 @@
     font-size: 0.875rem;
   }
 }
+.message-container {
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button-container {
+  margin-top: 10px;
+}
