@@ -139,7 +139,7 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
             <div className="d-flex justify-content-end mb-3">
               <button
                 onClick={handleUpload}
-                className="btn btn-success btn-icon mr-2"
+                className="btn btn-primary btn-icon mr-2"
                 disabled={selectedUploadFiles.length === 0}
               >
                 <Upload size={18} />
@@ -147,11 +147,11 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
               </button>
               <button
                 onClick={handleDelete}
-                className="btn btn-danger btn-icon"
+                className="btn btn-outline-danger btn-icon"
                 disabled={selectedFiles.length === 0}
               >
                 <Trash2 size={18} />
-                Delete Files
+                Delete Selected
               </button>
             </div>
 
