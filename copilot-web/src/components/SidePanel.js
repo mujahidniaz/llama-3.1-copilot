@@ -84,6 +84,13 @@ const SidePanel = ({
               min="0"
             />
           </div>
+
+          <button
+            className="knowledge-base-button"
+            onClick={() => console.log("Knowledge Base Button Clicked")}
+          >
+            Knowledge Base
+          </button>
         </div>
 
         {notification && (
@@ -92,8 +99,6 @@ const SidePanel = ({
           </div>
         )}
       </div>
-
-
     </>
   );
 };

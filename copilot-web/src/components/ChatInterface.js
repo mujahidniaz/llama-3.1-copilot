@@ -113,12 +113,6 @@ const ChatInterface = () => {
       <div className="main-chat">
         <div className="chat-header">
           <h2 style={{ fontFamily: "Exo" }}>TRY THE ART OF DEDUCTION</h2>
-          <button
-            className="knowledge-base-button"
-            onClick={() => setIsKnowledgeBaseModalOpen(true)}
-          >
-            Knowledge Base
-          </button>
           <KnowledgeBaseModal
             isOpen={isKnowledgeBaseModalOpen}
             onClose={() => setIsKnowledgeBaseModalOpen(false)}
