@@ -64,16 +64,18 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleUpload = async (files) => {
-    if (files.length === 0) {
+  const [selectedUploadFiles, setSelectedUploadFiles] = useState([]);
+
+  const handleUpload = async () => {
+    if (selectedUploadFiles.length === 0) {
       setError("Please select at least one file to upload.");
       return;
     }
 
     setIsLoading(true);
     const formData = new FormData();
-    for (let i = 0; i < files.length; i++) {
-      formData.append("files", files[i]);
+    for (let i = 0; i < selectedUploadFiles.length; i++) {
+      formData.append("files", selectedUploadFiles[i]);
     }
 
     try {
@@ -82,11 +84,16 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
       });
       console.log("Files uploaded successfully:", response.data);
       fetchFiles();
+      setSelectedUploadFiles([]);
     } catch (error) {
       setError("Failed to upload files. Please try again.");
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleFileInputChange = (e) => {
+    setSelectedUploadFiles(Array.from(e.target.files));
   };
 
   const handleDragOver = (e) => {
@@ -102,7 +109,7 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
     e.preventDefault();
     setDragOver(false);
     const files = e.dataTransfer.files;
-    handleUpload(files);
+    setSelectedUploadFiles(Array.from(files));
   };
 
   if (!isOpen) return null;
@@ -136,7 +143,7 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
               <input
                 type="file"
                 multiple
-                onChange={(e) => handleUpload(e.target.files)}
+                onChange={handleFileInputChange}
                 className="d-none"
                 id="file-input"
               />
@@ -146,8 +153,18 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
               </label>
             </div>
 
-            <div className="file-list">
-              <table className="table table-bordered">
+            {selectedUploadFiles.length > 0 && (
+              <div className="mt-3">
+                <p>{selectedUploadFiles.length} file(s) selected</p>
+                <button onClick={handleUpload} className="btn btn-success btn-icon">
+                  <Upload size={18} />
+                  Upload Files
+                </button>
+              </div>
+            )}
+
+            <div className="file-list mt-4">
+              <table className="table table-bordered table-striped w-100">
                 <thead>
                   <tr>
                     <th scope="col"></th>
