@@ -33,7 +33,8 @@ const ChatInterface = () => {
   const downloadChat = () => {
     const chatContent = messages.map(msg => `${msg.isUser ? 'User' : 'AI'}: ${msg.text}`).join('\n\n');
     const blob = new Blob([chatContent], { type: 'text/plain;charset=utf-8' });
-    saveAs(blob, 'chat_history.txt');
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    saveAs(blob, `chat_history_${timestamp}.txt`);
   };
 
   useEffect(() => {
