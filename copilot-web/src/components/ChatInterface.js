@@ -6,7 +6,7 @@ import Message from "./Message";
 import SidePanel from "./SidePanel";
 import TypingAnimation from "./TypingAnimation";
 import KnowledgeBaseModal from "./KnowledgeBaseModal";
-import { saveAs } from 'file-saver';
+import saveAs from 'file-saver';
 
 const ChatInterface = () => {
   const [isKnowledgeBaseModalOpen, setIsKnowledgeBaseModalOpen] =
