@@ -151,13 +151,13 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
                 Delete
               </button>
               <button
-                style={{ marginLeft: "2%" }}
                 type="button"
-                className="btn btn-outline-secondary btn-sm ms-4"
+                className="btn btn-outline-secondary btn-icon me-2"
                 aria-label="Close"
                 onClick={onClose}
               >
-                <X size={14} />
+                <X size={14} className="me-1" />
+                Close
               </button>
             </div>
           </div>
