@@ -1,29 +1,29 @@
 version: '3.8'
 
 services:
-#  copilot_backend:
-#    image: mujahid002/sherlock-ai-backend
-#    container_name: flask-api
-#    restart: always
-#    ports:
-#      - "8000:8000"
+  copilot_backend:
+    image: mujahid002/sherlock-ai-backend
+    container_name: flask-api
+    restart: always
+    ports:
+      - "8000:8000"
+    depends_on:
+      - ollama-api
+    volumes:
+      - ./data:/data  # Maps host directory to container directory
+    environment:
+      - FLASK_ENV=development
+      - CHUNK_SIZE=1000
+      - OLLAMA_MODEL=llama3.1:8b-instruct-q2_K
+      - LLAMA_HOST=http://ollama-api:11434  # Corrected for internal Docker network
+
+  copilot_web:
+    image: mujahid002/sherlock-ai-frontend
+    container_name: react-app
 #    depends_on:
-#      - ollama-api
-#    volumes:
-#      - ./data:/data  # Maps host directory to container directory
-#    environment:
-#      - FLASK_ENV=development
-#      - CHUNK_SIZE=1000
-#      - OLLAMA_MODEL=llama3.1:8b-instruct-q2_K
-#      - LLAMA_HOST=http://ollama-api:11434  # Corrected for internal Docker network
-#
-#  copilot_web:
-#    image: mujahid002/sherlock-ai-frontend
-#    container_name: react-app
-##    depends_on:
-##      - copilot_backend
-#    ports:
-#      - "3000:80"
+#      - copilot_backend
+    ports:
+      - "3000:80"
   ollama-api:
     image: ollama/ollama
     container_name: ollama-api

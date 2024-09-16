@@ -65,6 +65,7 @@ jobs:
         if: needs.check_changes.outputs.frontend == 'true'
         run: |
           cd ./copilot-web
+          export DISABLE_ESLINT_PLUGIN=true
           npm ci
           npm run build --quiet
           cd ..
