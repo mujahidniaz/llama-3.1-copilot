@@ -330,23 +330,23 @@
 
 /* Button Styles */
 .btn-success {
-  background-color: #28a745;
-  border-color: #28a745;
+  background-color: #04AA6D;
+  border-color: #008a57;
 }
 
 .btn-success:hover {
-  background-color: #218838;
-  border-color: #1e7e34;
+  background-color: #008a57;
+  border-color: #008a57;
 }
 
 .btn-danger {
-  background-color: #dc3545;
-  border-color: #dc3545;
+  background-color: #a3404a;
+  border-color: #a3404a;
 }
 
 .btn-danger:hover {
-  background-color: #c82333;
-  border-color: #bd2130;
+  background-color: #66292f;
+  border-color: #66292f;
 }
 
 .btn-primary {
