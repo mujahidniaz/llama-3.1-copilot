@@ -1,4 +1,22 @@
+import json
 import re
+import yake
+
+# Define the text
+text = "how does hawkins go to the office"
+
+# Initialize YAKE extractor
+language = "en"
+max_ngram_size = 3
+deduplication_threshold = 0.9
+num_keywords = 5
+custom_kw_extractor = yake.KeywordExtractor(lan=language, n=max_ngram_size, dedupLim=deduplication_threshold,
+                                            top=num_keywords, features=None)
+
+# Extract keywords
+keywords = custom_kw_extractor.extract_keywords(text)
+search_conditions = list({"$contains": kw} for kw, score in keywords)
+print(search_conditions)
 
 import chromadb
 from chromadb import Settings, DEFAULT_TENANT, DEFAULT_DATABASE
@@ -15,9 +33,10 @@ chroma_client = chromadb.HttpClient(
 # mystr = 'This is a string, with words!'
 # wordList = re.sub("[^\w]", " ",  mystr).split()
 # print(wordList)
-collection=chroma_client.get_or_create_collection("documents_collection")
+collection = chroma_client.get_or_create_collection("documents_collection")
 results = collection.query(
-    query_texts=["whats Mujahid working on?"], n_results=2
+    query_texts=[text], n_results=2,
+    where_document={"$or": search_conditions}
 )
 print(results)
 # import os

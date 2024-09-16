@@ -90,7 +90,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Create or get ChromaDB collection
 def split_document(doc_text, chunk_size=CHUNK_SIZE):
     """Split a document into smaller chunks based on word count."""
-    words = doc_text.split()
+    words = doc_text.lower().split()
     return [' '.join(words[i:i + chunk_size]) for i in range(0, len(words), chunk_size)]
 
 

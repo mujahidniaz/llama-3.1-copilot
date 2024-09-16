@@ -133,7 +133,7 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
         <div className="modal-content">
           <div className="modal-header">
             <h3 className="modal-title ms-4">Knowledge Base</h3>
-            <div className="d-flex align-items-center" style={{ width: "25%" }}>
+            <div className="d-flex align-items-center" style={{ width: "30%" }}>
               <button
                 onClick={handleUpload}
                 className="btn btn-success btn-sm btn-icon me-2"
