@@ -6,6 +6,7 @@ import Message from "./Message";
 import SidePanel from "./SidePanel";
 import TypingAnimation from "./TypingAnimation";
 import KnowledgeBaseModal from "./KnowledgeBaseModal";
+import { saveAs } from 'file-saver';
 
 const ChatInterface = () => {
   const [isKnowledgeBaseModalOpen, setIsKnowledgeBaseModalOpen] =
@@ -27,6 +28,12 @@ const ChatInterface = () => {
 
   const closeKnowledgeBaseModal = () => {
     setIsKnowledgeBaseModalOpen(false);
+  };
+
+  const downloadChat = () => {
+    const chatContent = messages.map(msg => `${msg.isUser ? 'User' : 'AI'}: ${msg.text}`).join('\n\n');
+    const blob = new Blob([chatContent], { type: 'text/plain;charset=utf-8' });
+    saveAs(blob, 'chat_history.txt');
   };
 
   useEffect(() => {
@@ -123,6 +130,9 @@ const ChatInterface = () => {
       <div className="main-chat">
         <div className="chat-header">
           <h2 style={{ fontFamily: "Exo" }}>TRY THE ART OF DEDUCTION</h2>
+          <button onClick={downloadChat} className="download-button">
+            Download Chat
+          </button>
           <KnowledgeBaseModal
             isOpen={isKnowledgeBaseModalOpen}
             onClose={closeKnowledgeBaseModal}

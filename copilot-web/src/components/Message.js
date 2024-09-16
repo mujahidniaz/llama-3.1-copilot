@@ -5,8 +5,13 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { dracula } from "react-syntax-highlighter/dist/esm/styles/prism"; // Dark theme for code blocks
 import "../styles/Message.css";
 import Table from 'react-bootstrap/Table';
+import { saveAs } from 'file-saver';
 
 const Message = ({ text, isUser }) => {
+  const downloadMessage = () => {
+    const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+    saveAs(blob, `message_${isUser ? 'user' : 'ai'}.txt`);
+  };
   // Components for Markdown elements
   const components = {
     code({ node, inline, className, children, ...props }) {
@@ -68,6 +73,9 @@ const Message = ({ text, isUser }) => {
   return (
     <div className={`message ${isUser ? "user" : "bot"}`}>
       <div className="message-content">{renderTable(text)}</div>
+      <button onClick={downloadMessage} className="download-message-button">
+        Download
+      </button>
     </div>
   );
 };
