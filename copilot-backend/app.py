@@ -127,7 +127,9 @@ def add_documents():
             documents=all_documents,  # Document chunks
             ids=all_ids  # Unique IDs for each chunk
         )
-
+    results = collection.query(
+        query_texts=["test"], n_results=10
+    )
     return
 
 
