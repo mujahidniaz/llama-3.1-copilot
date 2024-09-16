@@ -121,12 +121,12 @@ def add_documents():
         ids = [f"{os.path.basename(doc.doc_id)}_{i}" for i in range(len(chunks))]
         all_documents.extend(chunks)
         all_ids.extend(ids)
-
-    # Add documents to ChromaDB
-    collection.add(
-        documents=all_documents,  # Document chunks
-        ids=all_ids  # Unique IDs for each chunk
-    )
+    if len(all_ids)>0:
+        # Add documents to ChromaDB
+        collection.add(
+            documents=all_documents,  # Document chunks
+            ids=all_ids  # Unique IDs for each chunk
+        )
 
     return
 

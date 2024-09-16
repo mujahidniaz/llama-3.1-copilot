@@ -12,19 +12,22 @@ jobs:
       frontend: ${{ steps.filter.outputs.frontend }}
       backend: ${{ steps.filter.outputs.backend }}
     steps:
-    - uses: actions/checkout@v3
-    - uses: dorny/paths-filter@v2
-      id: filter
-      with:
-        filters: |
-          frontend:
-            - 'copilot-web/**'
-          backend:
-            - 'copilot-backend/**'
+      - uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            frontend:
+              - 'copilot-web/**'
+            backend:
+              - 'copilot-backend/**'
 
   build-and-push:
     needs: check_changes
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        service: [frontend, backend]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -47,13 +50,13 @@ jobs:
           password: ${{ secrets.DOCKER_HUB_PASSWORD }}
 
       - name: Set up Node.js
-        if: needs.check_changes.outputs.frontend == 'true'
+        if: matrix.service == 'frontend' && needs.check_changes.outputs.frontend == 'true'
         uses: actions/setup-node@v3
         with:
           node-version: '18'
 
       - name: Cache npm dependencies
-        if: needs.check_changes.outputs.frontend == 'true'
+        if: matrix.service == 'frontend' && needs.check_changes.outputs.frontend == 'true'
         uses: actions/cache@v3
         with:
           path: ~/.npm
@@ -62,7 +65,7 @@ jobs:
             ${{ runner.OS }}-node-
 
       - name: Build React Frontend
-        if: needs.check_changes.outputs.frontend == 'true'
+        if: matrix.service == 'frontend' && needs.check_changes.outputs.frontend == 'true'
         run: |
           cd ./copilot-web
           export DISABLE_ESLINT_PLUGIN=true
@@ -71,7 +74,7 @@ jobs:
           cd ..
 
       - name: Build and push frontend
-        if: needs.check_changes.outputs.frontend == 'true'
+        if: matrix.service == 'frontend' && needs.check_changes.outputs.frontend == 'true'
         uses: docker/build-push-action@v4
         with:
           context: ./copilot-web
@@ -81,16 +84,17 @@ jobs:
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
 
       - name: Build and push backend
-        if: needs.check_changes.outputs.backend == 'true'
+        if: matrix.service == 'backend' && needs.check_changes.outputs.backend == 'true'
         uses: docker/build-push-action@v4
         with:
           context: ./copilot-backend
           push: true
-          tags: mujahid002/sherlock-ai-backend:latest
+          tags: mujahid002/sherlock-ai-backend-small:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
 
       - name: Move cache
+        if: matrix.service == 'frontend' || matrix.service == 'backend'
         run: |
           if [ -d /tmp/.buildx-cache-new ]; then
             rm -rf /tmp/.buildx-cache
@@ -100,14 +104,3 @@ jobs:
       - name: Check if anything was built
         if: needs.check_changes.outputs.frontend != 'true' && needs.check_changes.outputs.backend != 'true'
         run: echo "No changes detected in frontend or backend. Skipping build and push."
-
-#      - name: Deploy to Remote Server
-#        uses: appleboy/ssh-action@master
-#        with:
-#          host: ${{ secrets.REMOTE_HOST }}
-#          username: ${{ secrets.REMOTE_USER }}
-#          password: ${{ secrets.SSH_PASSWORD }}
-#          port: 22  # Specify your SSH port if it's not the default
-#          script: |
-#            cd /home/bestbottle/
-#            ./script.sh

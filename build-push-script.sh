@@ -22,7 +22,7 @@ docker push "$IMAGE_NAME":"$TAG"
 echo "Frontend image has been built and pushed successfully."
 
 # Set the image name and tag for the backend
-IMAGE_NAME="mujahid002/sherlock-ai-backend"
+IMAGE_NAME="mujahid002/sherlock-ai-backend-small"
 TAG="latest"
 
 # Build the Docker image for the backend

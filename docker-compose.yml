@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   copilot_backend:
-    image: mujahid002/sherlock-ai-backend
+    image: mujahid002/sherlock-ai-backend-small
     container_name: flask-api
     restart: always
     ports:
