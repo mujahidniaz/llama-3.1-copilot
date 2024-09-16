@@ -11,3 +11,4 @@ transformers
 python-pptx
 Pillow
 ollama
+docx2txt
