@@ -282,7 +282,7 @@ def delete_files():
         file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
 
         if not os.path.exists(file_path):
-            results.append({'filename': filename, 'status': 'error', 'message': 'File not found!'})
+            results.append({'filename': filename, 'status': 'error', 'message': 'File not found'})
         elif not os.path.isfile(file_path):
             results.append({'filename': filename, 'status': 'error', 'message': 'Not a file'})
         else:
