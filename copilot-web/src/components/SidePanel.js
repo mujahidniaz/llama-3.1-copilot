@@ -81,7 +81,9 @@ const SidePanel = ({
               id="chatHistory"
               value={chatHistoryMessages}
               onChange={(e) =>
-                setChatHistoryMessages(Math.max(0, parseInt(e.target.value) || 0))
+                setChatHistoryMessages(
+                  Math.max(0, parseInt(e.target.value) || 0)
+                )
               }
               min="0"
             />
