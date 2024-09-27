@@ -113,11 +113,25 @@ const ChatInterface = () => {
     });
   };
 
-  const stopGeneration = () => {
-    socketRef.current.emit("stop_generation");
-    setIsGenerating(false);
-    setGenerationStopped(true);
-  };
+  useEffect(() => {
+    if (!generationStopped) {
+      socketRef.current.off("receive_message");
+      socketRef.current.on("receive_message", (data) => {
+        setMessages((prevMessages) => {
+          const newMessages = [...prevMessages];
+          if (newMessages[newMessages.length - 1]?.isUser) {
+            newMessages.push({ text: data.content, isUser: false });
+          } else {
+            newMessages[newMessages.length - 1] = {
+              text: newMessages[newMessages.length - 1].text + data.content,
+              isUser: false,
+            };
+          }
+          return newMessages;
+        });
+      });
+    }
+  }, [generationStopped]);
 
   const stopGeneration = () => {
     socketRef.current.emit("stop_generation");
