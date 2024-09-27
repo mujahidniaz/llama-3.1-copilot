@@ -40,40 +40,49 @@ const ChatInterface = () => {
   useEffect(() => {
     socketRef.current = io("http://localhost:8000");
 
-    socketRef.current.on("connect", () => {
-      setIsConnected(true);
-    });
-
-    socketRef.current.on("disconnect", () => {
-      setIsConnected(false);
-    });
-
-    socketRef.current.on("receive_message", (data) => {
-      if (generationStopped) return;
-
-      setMessages((prevMessages) => {
-        const newMessages = [...prevMessages];
-        if (newMessages[newMessages.length - 1]?.isUser) {
-          newMessages.push({ text: data.content, isUser: false });
-        } else {
-          newMessages[newMessages.length - 1] = {
-            text: newMessages[newMessages.length - 1].text + data.content,
-            isUser: false,
-          };
-        }
-        return newMessages;
+    const setupSocketListeners = () => {
+      socketRef.current.on("connect", () => {
+        setIsConnected(true);
       });
-    });
 
-    socketRef.current.on("generation_completed", () => {
-      setIsGenerating(false);
-    });
+      socketRef.current.on("disconnect", () => {
+        setIsConnected(false);
+      });
 
-    return () => {
+      socketRef.current.on("receive_message", (data) => {
+        if (generationStopped) return;
+
+        setMessages((prevMessages) => {
+          const newMessages = [...prevMessages];
+          if (newMessages[newMessages.length - 1]?.isUser) {
+            newMessages.push({ text: data.content, isUser: false });
+          } else {
+            newMessages[newMessages.length - 1] = {
+              text: newMessages[newMessages.length - 1].text + data.content,
+              isUser: false,
+            };
+          }
+          return newMessages;
+        });
+      });
+
+      socketRef.current.on("generation_completed", () => {
+        setIsGenerating(false);
+      });
+    };
+
+    const cleanupSocketListeners = () => {
       socketRef.current.off("connect");
       socketRef.current.off("disconnect");
       socketRef.current.off("receive_message");
       socketRef.current.off("generation_completed");
+    };
+
+    cleanupSocketListeners();
+    setupSocketListeners();
+
+    return () => {
+      cleanupSocketListeners();
       socketRef.current.disconnect();
     };
   }, [generationStopped]);
@@ -102,6 +111,12 @@ const ChatInterface = () => {
       use_knowledge_base: useKnowledgeBase,
       relevant_documents: relevantDocuments,
     });
+  };
+
+  const stopGeneration = () => {
+    socketRef.current.emit("stop_generation");
+    setIsGenerating(false);
+    setGenerationStopped(true);
   };
 
   const stopGeneration = () => {
