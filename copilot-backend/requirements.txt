@@ -4,6 +4,5 @@ Flask-CORS
 llama_index
 faiss-cpu
 chromadb
-python-pptx
 ollama
 docx2txt

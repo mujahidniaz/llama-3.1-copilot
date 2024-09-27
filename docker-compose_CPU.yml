@@ -15,7 +15,7 @@ services:
     environment:
       - FLASK_ENV=production
       - CHUNK_SIZE=1000
-      - OLLAMA_MODEL=llama3.1:8b-instruct-q2_K
+      - OLLAMA_MODEL=llama3.2:1b
       - LLAMA_HOST=http://ollama-api:11434  # Corrected for internal Docker network
 
   copilot_web:

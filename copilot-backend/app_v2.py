@@ -59,7 +59,7 @@ def get_env_as_float(var_name, default=0.5):
 app = Flask(__name__)
 CORS(app)
 socketio = SocketIO(app, cors_allowed_origins="*")
-MODEL = os.environ.get('OLLAMA_MODEL', "llama3.1:8b-instruct-q2_K")
+MODEL = os.environ.get('OLLAMA_MODEL', "llama3.2:1b")
 CHROMA_HOST = os.environ.get('CHROMA_HOST', "localhost")
 CHROMA_PORT = os.environ.get('CHROMA_PORT', "9000")
 CHROMA_COLLECTION = os.environ.get('CHROMA_COLLECTION', "documents_collection")
@@ -90,7 +90,7 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Create or get ChromaDB collection
 def split_document(doc_text, chunk_size=CHUNK_SIZE):
     """Split a document into smaller chunks based on word count."""
-    words = doc_text.split()
+    words = doc_text.lower().split()
     return [' '.join(words[i:i + chunk_size]) for i in range(0, len(words), chunk_size)]
 
 
@@ -121,13 +121,15 @@ def add_documents():
         ids = [f"{os.path.basename(doc.doc_id)}_{i}" for i in range(len(chunks))]
         all_documents.extend(chunks)
         all_ids.extend(ids)
-
-    # Add documents to ChromaDB
-    collection.add(
-        documents=all_documents,  # Document chunks
-        ids=all_ids  # Unique IDs for each chunk
+    if len(all_ids)>0:
+        # Add documents to ChromaDB
+        collection.add(
+            documents=all_documents,  # Document chunks
+            ids=all_ids  # Unique IDs for each chunk
+        )
+    results = collection.query(
+        query_texts=["test"], n_results=10
     )
-
     return
 
 
