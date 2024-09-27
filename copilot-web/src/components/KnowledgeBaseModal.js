@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import axios from "axios";
 import { X, Trash2, Upload, Loader, FileText } from "lucide-react";
 import "../styles/KnowledgeBaseModal.css";
@@ -20,6 +20,10 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [dragOver, setDragOver] = useState(false);
+
+  const allowedFileTypes = useMemo(() => [
+    'txt', 'json', 'csv', 'pdf', 'doc', 'docx', 'md'
+  ], []);
 
   const fetchFiles = useCallback(async () => {
     setIsLoading(true);
