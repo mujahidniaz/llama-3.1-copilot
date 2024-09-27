@@ -29,14 +29,17 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
     setIsLoading(true);
     try {
       const response = await axios.get("http://localhost:8000/list_files");
-      setFiles(response.data);
+      const filteredFiles = response.data.filter(file => 
+        allowedFileTypes.includes(file.name.split('.').pop().toLowerCase())
+      );
+      setFiles(filteredFiles);
     } catch (error) {
       setError("Failed to fetch files. Please try again.");
     } finally {
       setIsLoading(false);
       setSuccessMessage("");
     }
-  }, []);
+  }, [allowedFileTypes]);
 
   useEffect(() => {
     if (isOpen) {
