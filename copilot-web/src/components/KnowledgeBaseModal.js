@@ -83,8 +83,23 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
     setError(null);
     setSuccessMessage("");
     const formData = new FormData();
+    let hasInvalidFile = false;
+
     for (let i = 0; i < selectedUploadFiles.length; i++) {
-      formData.append("files", selectedUploadFiles[i]);
+      const file = selectedUploadFiles[i];
+      const fileExtension = file.name.split('.').pop().toLowerCase();
+      
+      if (allowedFileTypes.includes(fileExtension)) {
+        formData.append("files", file);
+      } else {
+        hasInvalidFile = true;
+      }
+    }
+
+    if (hasInvalidFile) {
+      setError(`Only ${allowedFileTypes.join(', ')} files are allowed.`);
+      setIsLoading(false);
+      return;
     }
 
     try {
@@ -122,12 +137,12 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
     setDragOver(false);
   };
 
-  const handleDrop = (e) => {
+  const handleDrop = useCallback((e) => {
     e.preventDefault();
     setDragOver(false);
     const files = e.dataTransfer.files;
     setSelectedUploadFiles(Array.from(files));
-  };
+  }, []);
 
   if (!isOpen) return null;
 
