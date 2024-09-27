@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import AnimatedHeartbeat from "./AnimatedHeartbeat";
-
+import AnimatedSherlock from "./AnimatedSherlock";
 const SidePanel = ({
   useKnowledgeBase,
   setUseKnowledgeBase,
@@ -36,17 +36,19 @@ const SidePanel = ({
   return (
     <>
       <div className="side-panel">
-        <div className="logo-container">
+        {/* <div className="logo-container">
           <img
             src="img/logo.png"
             alt="Sherlock Logo"
             className="logo"
             width="300"
           />
+        </div>{" "} */}
+        <div className="logo-container">
+          <AnimatedSherlock />
         </div>
 
         <AnimatedHeartbeat />
-
         <div className="features">
           <div className="toggle-container">
             <span className="toggle-label">Use Knowledge Base</span>
@@ -96,7 +98,6 @@ const SidePanel = ({
             Knowledge Base
           </button>
         </div>
-
         {notification && (
           <div className={`notification ${notification.type}`}>
             <p>{notification.message}</p>
