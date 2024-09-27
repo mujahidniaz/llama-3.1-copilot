@@ -110,12 +110,6 @@ const ChatInterface = () => {
     setGenerationStopped(true);
   };
 
-  const stopGeneration = () => {
-    socketRef.current.emit("stop_generation");
-    setIsGenerating(false);
-    setGenerationStopped(true);
-  };
-
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
