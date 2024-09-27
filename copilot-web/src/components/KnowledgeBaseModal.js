@@ -127,8 +127,20 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleFileInputChange = (e) => {
-    setSelectedUploadFiles(Array.from(e.target.files));
+  const handleFileUpload = (e) => {
+    const files = Array.from(e.target.files);
+    const validFiles = files.filter(file => {
+      const fileExtension = file.name.split('.').pop().toLowerCase();
+      return allowedFileTypes.includes(fileExtension);
+    });
+
+    if (validFiles.length !== files.length) {
+      setError(`Only ${allowedFileTypes.join(', ')} files are allowed.`);
+    } else {
+      setError(null);
+    }
+
+    setSelectedUploadFiles(validFiles);
   };
 
   const handleDragOver = (e) => {
@@ -143,9 +155,8 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
   const handleDrop = useCallback((e) => {
     e.preventDefault();
     setDragOver(false);
-    const files = e.dataTransfer.files;
-    setSelectedUploadFiles(Array.from(files));
-  }, []);
+    handleFileUpload({ target: { files: e.dataTransfer.files } });
+  }, [handleFileUpload]);
 
   if (!isOpen) return null;
 
@@ -200,9 +211,10 @@ const KnowledgeBaseModal = ({ isOpen, onClose }) => {
                   <input
                     type="file"
                     multiple
-                    onChange={handleFileInputChange}
+                    onChange={handleFileUpload}
                     className="file-input"
                     id="file-input"
+                    accept=".txt,.json,.csv,.pdf,.doc,.docx,.md"
                   />
                 </div>
               </div>
