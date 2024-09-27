@@ -49,41 +49,44 @@ const ChatInterface = () => {
         setIsConnected(false);
       });
 
-      socketRef.current.on("receive_message", (data) => {
-        if (generationStopped) return;
-
-        setMessages((prevMessages) => {
-          const newMessages = [...prevMessages];
-          if (newMessages[newMessages.length - 1]?.isUser) {
-            newMessages.push({ text: data.content, isUser: false });
-          } else {
-            newMessages[newMessages.length - 1] = {
-              text: newMessages[newMessages.length - 1].text + data.content,
-              isUser: false,
-            };
-          }
-          return newMessages;
-        });
-      });
-
       socketRef.current.on("generation_completed", () => {
         setIsGenerating(false);
+        setGenerationStopped(false);
       });
     };
 
-    const cleanupSocketListeners = () => {
-      socketRef.current.off("connect");
-      socketRef.current.off("disconnect");
-      socketRef.current.off("receive_message");
-      socketRef.current.off("generation_completed");
-    };
-
-    cleanupSocketListeners();
     setupSocketListeners();
 
     return () => {
-      cleanupSocketListeners();
+      socketRef.current.off("connect");
+      socketRef.current.off("disconnect");
+      socketRef.current.off("generation_completed");
       socketRef.current.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleReceiveMessage = (data) => {
+      if (generationStopped) return;
+
+      setMessages((prevMessages) => {
+        const newMessages = [...prevMessages];
+        if (newMessages[newMessages.length - 1]?.isUser) {
+          newMessages.push({ text: data.content, isUser: false });
+        } else {
+          newMessages[newMessages.length - 1] = {
+            text: newMessages[newMessages.length - 1].text + data.content,
+            isUser: false,
+          };
+        }
+        return newMessages;
+      });
+    };
+
+    socketRef.current.on("receive_message", handleReceiveMessage);
+
+    return () => {
+      socketRef.current.off("receive_message", handleReceiveMessage);
     };
   }, [generationStopped]);
 
@@ -113,25 +116,6 @@ const ChatInterface = () => {
     });
   };
 
-  useEffect(() => {
-    if (!generationStopped) {
-      socketRef.current.off("receive_message");
-      socketRef.current.on("receive_message", (data) => {
-        setMessages((prevMessages) => {
-          const newMessages = [...prevMessages];
-          if (newMessages[newMessages.length - 1]?.isUser) {
-            newMessages.push({ text: data.content, isUser: false });
-          } else {
-            newMessages[newMessages.length - 1] = {
-              text: newMessages[newMessages.length - 1].text + data.content,
-              isUser: false,
-            };
-          }
-          return newMessages;
-        });
-      });
-    }
-  }, [generationStopped]);
 
   const stopGeneration = () => {
     socketRef.current.emit("stop_generation");
